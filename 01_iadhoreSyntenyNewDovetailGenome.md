@@ -141,3 +141,46 @@ less segments.txt |awk 'NR>1' |sed 'N;s/\n/ /' |awk '{print $1,$2,$3,$4,$5,$6,$7
 less segments.txt |awk 'NR>1' |sed 'N;s/\n/ /' |awk '{print $1,$2,$3,$4,$5,$6,$7"\n"$8,$9,$10,$11,$12,$13,$14}' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '{if($5=="scn1") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '$1=="scn2" && $5=="scn2"' |awk '{print $8}' |sed '/^$/d' |while read line; do grep -w $line SCN2Grepmod.gff; done |awk '{print $5}' >Col8
 less segments.txt |awk 'NR>1' |sed 'N;s/\n/ /' |awk ' {print $1,$2,$3,$4,$5,$6,$7"\n"$8,$9,$10,$11,$12,$13,$14}'  |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" "\t" |tr "#" "\n" |awk '{if($5=="scn2") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '$1=="scn2" && $5=="scn2"' |awk '{print $2,$6}' |paste - Col3 Col4 Col7 Col8 |awk '{print $1,$3,$4,$2,$5,$6}' >SCN2SyntenicRibbons.conf
 ```
+
+### Refine circos for scn genome poster PAG 2019
+
+```
+#/work/GIF/remkv6/Baum/01_SCNDovetailScaffolding/17_Synteny2DovetailGenomes/02_circos
+
+#remove the ribbons that are more than 1.5x size difference between the two regions.
+ less RevisedSyntenicRibbons.conf |awk '{print $0,$3-$2,$6-$5,(($3-$2)-($6-$5))}' |sed 's/-//g' |awk '$9<($7*1.5) && $9<($8*1.5)' |awk '{print $1,$2,$3,$4,$5,$6}' >RefineRemoveArtifactRevisedSyntenicRibbons.conf
+
+#get rid of little scaffolds
+less RemoveArtifactKaryotype.conf|awk '$6>200000' >RevisedRemoveArtifactKaryotype.conf
+
+less RevisedRemoveArtifactKaryotype.conf |awk '{print $3}' |sed 's/V2/SCN2/g' |grep -w -v -f - karyotype.conf |sed 's/SCN2/V2/g' |awk '{print $3}' |grep -v -w -f - RefineRemoveArtifactRevisedSyntenicRibbons.conf >ReducedRevisedRemoveArtifactKaryotype.conf
+
+#need to decide which chromoosmes should stay grouped.
+#manually removed Scaffold_100, Scaffold_29, V2Scaffold_245, V2Scaffold498, as there were not bands to these
+
+grep -v "V2" RevisedRemoveArtifactKaryotype.conf |awk '{print $3}' >v1ChrOrder.list
+
+#order the chromosomes to reduce band overlap
+/shared/software/GIF/programs/circos/0.69.2/../circos-tools-0.22/tools/orderchr/bin/orderchr -links ReducedRevisedRemoveArtifactKaryotype.conf -karyotype RevisedRemoveArtifactKaryoty
+pe.conf -static Scaffold_103,Scaffold_104,Scaffold_13,Scaffold_19,Scaffold_25,Scaffold_3,Scaffold_44,Scaffold_51,Scaffold_57,Scaffold_58,Scaffold_60,Scaffold_61,Scaffold_70,Scaffold_71,Scaffold_72,Scaffold_73,Sc
+affold_80,Scaffold_81,Scaffold_82,Scaffold_90 -init_order Scaffold_103,Scaffold_104,Scaffold_13,Scaffold_19,Scaffold_25,Scaffold_3,Scaffold_44,Scaffold_51,Scaffold_57,Scaffold_58,Scaffold_60,Scaffold_61,Scaffold
+_70,Scaffold_71,Scaffold_72,Scaffold_73,Scaffold_80,Scaffold_81,Scaffold_82,Scaffold_90
+calculating round 0
+report round 0 minimize init 11431 final 5028 change 56.01%
+calculating round 1
+report round 1 minimize init 5028 final 4147 change 17.52%
+calculating round 2
+report round 2 minimize init 4147 final 3960 change 4.51%
+calculating round 3
+report round 3 minimize init 3960 final 3960 change 0.00%
+scorereport init 11431 final 3960 change 65.36%
+chromosomes_order = Scaffold_57,Scaffold_61,Scaffold_72,Scaffold_82,Scaffold_90,Scaffold_51,Scaffold_58,Scaffold_70,Scaffold_71,Scaffold_81,Scaffold_13,Scaffold_44,Scaffold_19,Scaffold_3,Scaffold_80,Scaffold_60,
+Scaffold_73,Scaffold_104,Scaffold_25,Scaffold_103,V2Scaffold_13,V2Scaffold_159,V2Scaffold_49,V2Scaffold_478,V2Scaffold_310,V2Scaffold_413,V2Scaffold_474,V2Scaffold_459,V2Scaffold_127,V2Scaffold_56,V2Scaffold_553
+,V2Scaffold_572,V2Scaffold_468,V2Scaffold_573,V2Scaffold_101,V2Scaffold_583,V2Scaffold_32,V2Scaffold_18,V2Scaffold_14,V2Scaffold_584,V2Scaffold_97,V2Scaffold_206,V2Scaffold_425,V2Scaffold_575,V2Scaffold_461,V2Sc
+affold_74,V2Scaffold_172,V2Scaffold_484
+
+ mv circos.png ReducedRevisedRemoveArtifactKaryotype.png
+
+
+
+```
