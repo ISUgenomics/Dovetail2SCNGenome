@@ -831,7 +831,7 @@ mv BlacklistedMerged_sorted.txt merged_sort.txt
 cd ..
 bash scripts/juicer.sh -S dedup -z references/MisAssFixed.Pilon.fasta -p chrom.sizes &
 
-### XAD
+### XAD -- never completely finished problems with scaffold 1 at 10.9MB in the 31.4Mb scaffold
 less merged_sort.txt |awk '{if($3<$7) {print $2"\t"$3"\t"$7+150"\t"$0} else {print $2"\t"$7"\t"$3+150"\t"$0}}'|bedtools intersect -v -a - -b ../../02_InvestigateDupRegions/DedupList.bed |c
 ut -f 4- >BlacklistedMerged_sorted.txt
 mv merged_sort.txt OldMergedSort.txt
@@ -847,8 +847,53 @@ mv BlacklistedMerged_sorted.txt merged_sort.txt
 cd ..
 bash scripts/juicer.sh -S dedup -z references/MisAssFixed.Pilon.fasta -p chrom.sizes &
 ```
-### Repeatmasker coordinates for whole genome.  Try again
+### generate hic file manually with mostly deduped reads, minus jettisoning a few Gb of duplicated regions.  
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/aligned
+cat x*/aligned/merged_nodups.txt >merged_sort.txt
 
+
+module load bwa
+module load gnutls/3.5.13-7a3mvfy
+#must be 1.8 jdk
+module load jdk/8u172-b11-rnauqmr
+java -Xmx2g -jar ../scripts/juicer_tools.jar pre merged_nodups.txt merged_nodups2.hic ../chrom.sizes
+```
+
+### run 3D DNA pipeline
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/02_juicebox/
+git clone https://github.com/theaidenlab/3d-dna.git
+cd 3d-dna/
+
+module load last/869-56gezob
+module load gnutls/3.5.13-7a3mvfy
+#must be 1.8 jdk
+module load jdk/8u172-b11-rnauqmr
+module load python/2.7.15-ee5ffpe
+module load parallel/20170322-36gxsog
+bash run-asm-pipeline.sh  /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/aligned/merged_nodups.txt
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+##  Testing the cluster version to work with only 1million reads.
+
+### Repeatmasking genome coordinates.  
 ```
  blastn -db Genome.blastdb -query scaffold5:9162000-9164000.fasta -outfmt 6 -num_threads 10 -out scaffold5:9162000-9164000Genome.blastout
  cat consensi.fa.classified scaffold4_5570000-5610000.fasta  scaffold5\:9162000-9164000.fasta ../01_split/01_RemoveRepeats/CentRepeatRead.fasta >DedupList.fasta
@@ -857,5 +902,31 @@ blastn -db Genome.blastdb -query DedupList.fasta -outfmt 6 -num_threads 10 -out 
 
 #This did not finish completely
 less merged_sort.txt |awk '{if($3<$7) {print $2"\t"$3"\t"$7+150"\t"$0} else {print $2"\t"$7"\t"$3+150"\t"$0}}'|bedtools intersect -v -a - -b /02_InvestigateDupRegions/DedupList.bed |cut -f 4- >BlacklistedMerged_sorted.txt
+```
+
+###  Set up cluster version of juicer
+
+```
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/03_scn1Mtest
+
+mkdir references; cd references
+ln -s  ../../01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta
+cd ..
+git clone https://github.com/theaidenlab/juicer.git
+ln -s juicer/SLURM/scripts scripts/
+ln -s juicer/SLURM/scripts/ scripts
+cd scripts/
+wget http://hicfiles.tc4ga.com.s3.amazonaws.com/public/juicer/juicer_tools.1.7.6_jcuda.0.8.jar
+ln -s juicer_tools.1.7.6_jcuda.0.8.jar juicer_tools.jar
+cd ..
+mkdir fastq
+cd fastq/
+ln -s /work/GIF/remkv6/Baum/01_SCNDovetailScaffolding/02_DovetailFastq/CP4477_hic_hiseq/1.Illumina_indexing-5.CP-4477_R1.1M.fastq.gz
+ln -s /work/GIF/remkv6/Baum/01_SCNDovetailScaffolding/02_DovetailFastq/CP4477_hic_hiseq/1.Illumina_indexing-5.CP-4477_R2.1M.fastq.gz
+
+cd ../references
+ln -s ../../01_scnD2run/juicer/aligned/02_InvestigateDupRegions/DedupList.bed
+bedtools maskfasta -fi MisAssFixed.Pilon.fasta -fo MaskedMisAssFixed.Pilon.fasta -bed DedupList.bed
+unlink MisAssFixed.Pilon.fasta
 
 ```
