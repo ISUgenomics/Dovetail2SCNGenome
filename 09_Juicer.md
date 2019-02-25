@@ -77,7 +77,7 @@ cd restriction_sites
 
 ```
 ### Generate MboI restriction cutting sites
-#In retrospect, I don't think this was necessary.
+
 ```
 module load python/2.7.15-ief5zfp
 ../misc/generate_site_positions.py MboI MisAssFixed.Pilon.fasta /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/restriction_sites/MisAssFixed.Pilon.fasta
@@ -866,19 +866,42 @@ java -Xmx2g -jar ../scripts/juicer_tools.jar pre merged_nodups.txt merged_nodups
 git clone https://github.com/theaidenlab/3d-dna.git
 cd 3d-dna/
 
-module load last/869-56gezob
+module use /work/GIF/software/modules
+module load GIF2/lastz/1.03.73
 module load gnutls/3.5.13-7a3mvfy
 #must be 1.8 jdk
 module load jdk/8u172-b11-rnauqmr
-module load python/2.7.15-ee5ffpe
+module load python
 module load parallel/20170322-36gxsog
-bash run-asm-pipeline.sh  /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/aligned/merged_nodups.txt
+bash run-asm-pipeline.sh -e -m diploid /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/aligned/merged_nodups.txt
+
+runs in abot 8-9hrs 16cpu.  140gb bam merged_nodups.txt file.
 ```
 
 
 
 
+### Arun's version of juicer
+```
 
+
+cp /ptmp/GIF/arnstrm/juicer/SLURM/scripts/new_Juicer.sh .
+
+#This creates job files to split and run.  
+bash scripts/new_Juicer.sh  -y restriction_sites/MaskedMisAssFixed.Pilon.fasta_MboI.txt -z references/MaskedMisAssFixed.Pilon.fasta -p chrom.sizes
+
+rm -rf splits/
+rm -rf  aligned/
+
+#this just grabs version number and places them in a debug file.
+sbatch job1.sh
+
+
+#job3.sh has multiple sbatch requests, for each bwa alignment.  To make it run on multiple nodes:
+
+split -l 11 -d --additional-suffix=job3 job3.sh
+for f in x*job3; do sbatch $f;done
+```
 
 
 
@@ -907,26 +930,42 @@ less merged_sort.txt |awk '{if($3<$7) {print $2"\t"$3"\t"$7+150"\t"$0} else {pri
 ###  Set up cluster version of juicer
 
 ```
-/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/03_scn1Mtest
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/
+
+module load bedtools2
+module load bwa
+git clone https://github.com/theaidenlab/juicer.git
+cd juicer/
 
 mkdir references; cd references
-ln -s  ../../01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta
+ln -s  /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta
 cd ..
-git clone https://github.com/theaidenlab/juicer.git
-ln -s juicer/SLURM/scripts scripts/
-ln -s juicer/SLURM/scripts/ scripts
+
+ln -s SLURM/scripts/ scripts
 cd scripts/
 wget http://hicfiles.tc4ga.com.s3.amazonaws.com/public/juicer/juicer_tools.1.7.6_jcuda.0.8.jar
 ln -s juicer_tools.1.7.6_jcuda.0.8.jar juicer_tools.jar
 cd ..
 mkdir fastq
 cd fastq/
-ln -s /work/GIF/remkv6/Baum/01_SCNDovetailScaffolding/02_DovetailFastq/CP4477_hic_hiseq/1.Illumina_indexing-5.CP-4477_R1.1M.fastq.gz
-ln -s /work/GIF/remkv6/Baum/01_SCNDovetailScaffolding/02_DovetailFastq/CP4477_hic_hiseq/1.Illumina_indexing-5.CP-4477_R2.1M.fastq.gz
+for f in /work/GIF/remkv6/Baum/01_SCNDovetailScaffolding/02_DovetailFastq/CP4477_hic_hiseq/*gz ; do ln -s $f;done
 
 cd ../references
-ln -s ../../01_scnD2run/juicer/aligned/02_InvestigateDupRegions/DedupList.bed
+ln -s /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/aligned/02_InvestigateDupRegions/DedupList.bed
 bedtools maskfasta -fi MisAssFixed.Pilon.fasta -fo MaskedMisAssFixed.Pilon.fasta -bed DedupList.bed
 unlink MisAssFixed.Pilon.fasta
 
+module load bwa
+bwa index MaskedMisAssFixed.Pilon.fasta
+
+cd ../
+ln -s ../../01_scnD2run/juicer/chrom.sizes
+mkdir restriction_sites
+cd restriction_sites
+python ../misc/generate_site_positions.py MboI MaskedMisAssFixed.Pilon.fasta /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/juicer/references/MaskedMisAssFixed.Pilon.fasta
+cd ..
+
+
+#modified sbatch in submission script
+bash scripts/juicer.sh  -y restriction_sites/MaskedMisAssFixed.Pilon.fasta_MboI.txt -z references/MaskedMisAssFixed.Pilon.fasta -p chrom.sizes
 ```
