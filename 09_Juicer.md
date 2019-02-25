@@ -883,20 +883,21 @@ runs in abot 8-9hrs 16cpu.  140gb bam merged_nodups.txt file.
 
 ### Arun's version of juicer
 ```
-
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/juicer
 
 cp /ptmp/GIF/arnstrm/juicer/SLURM/scripts/new_Juicer.sh .
 
 #This creates job files to split and run.  
-bash scripts/new_Juicer.sh  -y restriction_sites/MaskedMisAssFixed.Pilon.fasta_MboI.txt -z references/MaskedMisAssFixed.Pilon.fasta -p chrom.sizes
+bash scripts/new_Juicer.sh  -C 90000000 -y restriction_sites/MaskedMisAssFixed.Pilon.fasta_MboI.txt -z references/MaskedMisAssFixed.Pilon.fasta -p chrom.sizes
 
 rm -rf splits/
 rm -rf  aligned/
 
 #this just grabs version number and places them in a debug file.
+#fix path to juicer tools and remove all \ from the awk $'s'
 sbatch job1.sh
-
-
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/juicer/fastq
+for f in *gz; do zcat $f |split -a 3 -l 90000000 -d --additional-suffix=".fastq" $f ../splits/$f ;done &
 #job3.sh has multiple sbatch requests, for each bwa alignment.  To make it run on multiple nodes:
 
 split -l 11 -d --additional-suffix=job3 job3.sh
