@@ -244,4 +244,162 @@ This just provided some structural variants, instead of filling gaps.  This is o
 #this should fill gaps, unless gaps are not closed with long reads.
 module load redundans
 redundans.py -o redundansOut --noreduction -l reads_of_insert.fastq -f scaffolds.fasta -t 16
+
+
+#This collapsed too many scaffolds, try gmcloser
+```
+
+## GMcloser to fill gaps with pacbio reads
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/05_gmcloserGapfilling
+ln -s ../reads_of_insert.fasta
+ln -s ../02_ScaffoldSubreads/PacBio_scaffolder_results/scaffolds.fasta
+ln -s ../../07_TN10IlluminaReads/27_27799_CAGATC_L002_R1_001.fastq
+ln -s ../../07_TN10IlluminaReads/27_27799_CAGATC_L002_R2_001.fastq
+#!/bin/bash
+#SBATCH -A its-hpc-condo-las-free
+#SBATCH -N 1
+#SBATCH -p freecompute
+#SBATCH --ntasks-per-node=12
+#SBATCH -t 168:00:00
+#SBATCH -J gmcloser_0
+#SBATCH -o gmcloser_0.o%j
+#SBATCH -e gmcloser_0.e%j
+#SBATCH --mail-user=remkv6@istate.edu
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+cd $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+module use /work/GIF/software/modules
+module load GIF/gmcloser
+module load GIF/perl
+gmcloser  -t scaffolds.fasta -q reads_of_insert.fasta -ht -c -n 12 -lr -it 3 -mq 2 -p out4 -l 100 -i 500 -d 50 -c
+scontrol show job $SLURM_JOB_ID
+
+
+
+Results
+################################################################################
+#beginning assembly
+new_Assemblathon.pl scaffolds.fasta
+Number of scaffolds        396
+Total size of scaffolds  166863111
+    Longest scaffold   31384913
+   Shortest scaffold        536
+Number of scaffolds > 1K nt        395  99.7%
+Number of scaffolds > 10K nt        390  98.5%
+Number of scaffolds > 100K nt        138  34.8%
+Number of scaffolds > 1M nt         15   3.8%
+Number of scaffolds > 10M nt          5   1.3%
+  Mean scaffold size     421371
+Median scaffold size      64938
+ N50 scaffold length   11380747
+  L50 scaffold count          5
+         scaffold %A      31.50
+         scaffold %C      18.35
+         scaffold %G      18.34
+         scaffold %T      31.47
+         scaffold %N       0.34
+ scaffold %non-ACGTN       0.00
+
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/05_gmcloserGapfilling/iteration-3
+new_Assemblathon.pl out4.gapclosed.fa
+Number of scaffolds        396
+                                    Total size of scaffolds  166141519
+                                           Longest scaffold   31274080
+                                          Shortest scaffold        536
+                                Number of scaffolds > 1K nt        395  99.7%
+                               Number of scaffolds > 10K nt        390  98.5%
+                              Number of scaffolds > 100K nt        138  34.8%
+                                Number of scaffolds > 1M nt         15   3.8%
+                               Number of scaffolds > 10M nt          5   1.3%
+                                         Mean scaffold size     419549
+                                       Median scaffold size      64938
+                                        N50 scaffold length   11339714
+                                         L50 scaffold count          5
+                                                scaffold %A      31.50
+                                                scaffold %C      18.35
+                                                scaffold %G      18.34
+                                                scaffold %T      31.47
+                                                scaffold %N       0.34
+                                        scaffold %non-ACGTN       0.00
+                            Number of scaffold non-ACGTN nt          0
+################################################################################
+
+GMcloser didnt do a very good job.  using Pilon for gap filling now
+```
+
+## Try to fill in more of those N's using Pilon
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/07_TN10IlluminaReads
+
+#Need to align the TN10 reads Matt gave me to the sspace scaffolded genome
+
+#Create hisat database
+module load hisat2
+hisat2-build scaffolds.fasta sspaceScaffolded
+
+
+runHisat2.sh
+#################################################################################
+#!/bin/bash
+
+module load hisat2
+module load samtools
+DBDIR="/work/GIF/remkv6/Baum/04_Dovetail2Restart/07_TN10IlluminaReads"
+GENOME="sspaceScaffolded"
+
+p=12
+R1_FQ="$1"
+R2_FQ="$2"
+
+OUTPUT=$(basename ${R1_FQ} |cut -f 1 -d "_");
+
+hisat2 \
+  -p ${p} \
+  -x ${DBDIR}/${GENOME} \
+  -1 ${R1_FQ} \
+  -2 ${R2_FQ}  \
+  -S  ${OUTPUT}.sam &> ${OUTPUT}.log
+samtools view --threads 12 -b -o ${OUTPUT}.bam ${OUTPUT}.sam
+samtools sort -m 5G -o ${OUTPUT}_sorted.bam -T ${OUTPUT}_temp --threads 12 ${OUTPUT}.bam
+######################################################################################
+
+sh runHISAT2.sh 27_27799_CAGATC_L002_R1_001.fastq 27_27799_CAGATC_L002_R2_001.fastq
+```
+
+
+## Now run Pilon with the bam file
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/07_Split1Pilon
+
+#this runs a bit faster if I split the genome across two nodes
+
+
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/07_Split1Pilon
+ln -s ../04_GapFilling/02_ScaffoldSubreads/PacBio_scaffolder_results/scaffolds.fasta Gmcloser.Scaffolds.fa
+module load cdbfasta
+cdbfasta Gmcloser.Scaffolds.fa
+awk '{print $1}' Gmcloser.Scaffolds1.bed |cdbyank Gmcloser.Scaffolds.fa.cidx > Gmcloser.Scaffolds1.fa
+
+module load samtools
+samtools view -@ 16 -b -L Gmcloser.Scaffolds1.bed ../06_pilonPolishGapFill/27_sorted.bam >Gmcloser.Scaffolds1.bam
+samtools index Gmcloser.Scaffolds1.bam
+module use /work/GIF/software/modules
+module load pilon/1.22-s7zrot6
+/opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/jdk-8u172-b11-rnauqmrxgpic4aopyat6bomafogtjavz/bin/java -Xms120000M -Xmx120000M -Xss2000M -jar /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/pilon-1.22-s7zrot6o5yqjh6oxpdxsxcdiswpjioyy/bin/pilon-1.22.jar  --genome Gmcloser.Scaffolds1.fa  --frags Gmcloser.Scaffolds1.bam --output Pilon1 --outdir /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/07_Split1Pilon/01_misassemblyTest --changes --vcf --tracks --fix all --threads 16 --mingap 0 --chunksize 1000000
+
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/08_Split2Pilon
+ln -s ../04_GapFilling/02_ScaffoldSubreads/PacBio_scaffolder_results/scaffolds.fasta Gmcloser.Scaffolds.fa
+module load cdbfasta
+cdbfasta Gmcloser.Scaffolds.fa
+awk '{print $1}' Gmcloser.Scaffolds2.bed |cdbyank Gmcloser.Scaffolds.fa.cidx > Gmcloser.Scaffolds2.fa
+
+module load samtools
+samtools view -@ 16 -b -L Gmcloser.Scaffolds1.bed ../06_pilonPolishGapFill/27_sorted.bam >Gmcloser.Scaffolds1.bam
+samtools index Gmcloser.Scaffolds1.bam
+
+module use /work/GIF/software/modules
+module load pilon/1.22-s7zrot6
+/opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/jdk-8u172-b11-rnauqmrxgpic4aopyat6bomafogtjavz/bin/java -Xms120000M -Xmx120000M -Xss2000M -jar /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/pilon-1.22-s7zrot6o5yqjh6oxpdxsxcdiswpjioyy/bin/pilon-1.22.jar  --genome Gmcloser.Scaffolds2.fa  --frags Gmcloser.Scaffolds2.bam --output Pilon2 --outdir /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/06_pilonPolishGapFill --changes --vcf --tracks --fix all --threads 16 --mingap 0 --chunksize 300000
 ```

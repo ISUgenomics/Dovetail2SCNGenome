@@ -850,14 +850,15 @@ bash scripts/juicer.sh -S dedup -z references/MisAssFixed.Pilon.fasta -p chrom.s
 ### generate hic file manually with mostly deduped reads, minus jettisoning a few Gb of duplicated regions.  
 ```
 #/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/aligned
-cat x*/aligned/merged_nodups.txt >merged_sort.txt
+cat x*/aligned/merged_nodups.txt >merged_nodups.txt
 
-
+cd /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/02_juicerUnmasked/aligned
 module load bwa
 module load gnutls/3.5.13-7a3mvfy
 #must be 1.8 jdk
 module load jdk/8u172-b11-rnauqmr
 java -Xmx2g -jar ../scripts/juicer_tools.jar pre merged_nodups.txt merged_nodups2.hic ../chrom.sizes
+
 ```
 
 ### run 3D DNA pipeline
@@ -881,54 +882,7 @@ runs in abot 8-9hrs 16cpu.  140gb bam merged_nodups.txt file.
 
 
 
-### Arun's version of juicer
-```
-/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/juicer
-
-cp /ptmp/GIF/arnstrm/juicer/SLURM/scripts/new_Juicer.sh .
-
-#This creates job files to split and run.  
-bash scripts/new_Juicer.sh  -C 90000000 -y restriction_sites/MaskedMisAssFixed.Pilon.fasta_MboI.txt -z references/MaskedMisAssFixed.Pilon.fasta -p chrom.sizes
-
-rm -rf splits/
-rm -rf  aligned/
-
-#this just grabs version number and places them in a debug file.
-#fix path to juicer tools and remove all \ from the awk $'s'
-sbatch job1.sh
-/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/juicer/fastq
-for f in *gz; do zcat $f |split -a 3 -l 90000000 -d --additional-suffix=".fastq" $f ../splits/$f ;done &
-#job3.sh has multiple sbatch requests, for each bwa alignment.  To make it run on multiple nodes:
-
-split -l 11 -d --additional-suffix=job3 job3.sh
-for f in x*job3; do sbatch $f;done
-```
-
-
-
-
-
-
-
-
-
-
-
-
-##  Testing the cluster version to work with only 1million reads.
-
-### Repeatmasking genome coordinates.  
-```
- blastn -db Genome.blastdb -query scaffold5:9162000-9164000.fasta -outfmt 6 -num_threads 10 -out scaffold5:9162000-9164000Genome.blastout
- cat consensi.fa.classified scaffold4_5570000-5610000.fasta  scaffold5\:9162000-9164000.fasta ../01_split/01_RemoveRepeats/CentRepeatRead.fasta >DedupList.fasta
-blastn -db Genome.blastdb -query DedupList.fasta -outfmt 6 -num_threads 10 -out AllRepeats.blastout
- less AllRepeats.blastout |awk '$12>200{if ($10>$9) {print $2"\t"$9"\t"$10} else {print $2"\t"$10"\t"$9}}' |sort --parallel 10 -k1,1V -k2,3n |bedtools merge -d 200 -i - >DedupList.bed
-
-#This did not finish completely
-less merged_sort.txt |awk '{if($3<$7) {print $2"\t"$3"\t"$7+150"\t"$0} else {print $2"\t"$7"\t"$3+150"\t"$0}}'|bedtools intersect -v -a - -b /02_InvestigateDupRegions/DedupList.bed |cut -f 4- >BlacklistedMerged_sorted.txt
-```
-
-###  Set up cluster version of juicer
+#  Set up juicer to run with Hi-C reads
 
 ```
 /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/
@@ -942,7 +896,7 @@ mkdir references; cd references
 ln -s  /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta
 cd ..
 
-ln -s SLURM/scripts/ scripts
+ln -s CPU/scripts/ scripts
 cd scripts/
 wget http://hicfiles.tc4ga.com.s3.amazonaws.com/public/juicer/juicer_tools.1.7.6_jcuda.0.8.jar
 ln -s juicer_tools.1.7.6_jcuda.0.8.jar juicer_tools.jar
@@ -966,7 +920,172 @@ cd restriction_sites
 python ../misc/generate_site_positions.py MboI MaskedMisAssFixed.Pilon.fasta /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/juicer/references/MaskedMisAssFixed.Pilon.fasta
 cd ..
 
-
-#modified sbatch in submission script
+#RUN JUICER
 bash scripts/juicer.sh  -y restriction_sites/MaskedMisAssFixed.Pilon.fasta_MboI.txt -z references/MaskedMisAssFixed.Pilon.fasta -p chrom.sizes
+
+#This finished in about 2-3 days
+
+```
+
+### 3DNA pipeline
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/01_JuiceBox
+
+git clone https://github.com/theaidenlab/3d-dna.git
+cd 3d-dna/
+
+module use /work/GIF/software/modules
+module load GIF2/lastz/1.03.73
+module load gnutls/3.5.13-7a3mvfy
+#must be 1.8 jdk
+module load jdk/8u172-b11-rnauqmr
+module load python
+module load parallel/20170322-36gxsog
+bash run-asm-pipeline.sh -e -m diploid /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/aligned/merged_nodups.txt
+
+runs in abot 7:06 hrs 16cpu.  144gb bam merged_nodups.txt file.
+
+################################################################################
+Number of scaffolds        968
+Total size of scaffolds  160071602
+   Longest scaffold   13754137
+  Shortest scaffold          1
+Number of scaffolds > 1K nt        925  95.6%
+Number of scaffolds > 10K nt        766  79.1%
+Number of scaffolds > 100K nt        158  16.3%
+Number of scaffolds > 1M nt         17   1.8%
+Number of scaffolds > 10M nt          2   0.2%
+ Mean scaffold size     165363
+Median scaffold size      25000
+N50 scaffold length    5161912
+ L50 scaffold count         10
+ ##############################################################################
+
+#Tried scaffolding with juicebox, and numerous scaffolding errors seemed to be present.  A problem with the masked genome removed coverage from some key areas.  Have to redo juicer using all parts of the genome.
+```
+
+
+#  Juicer with HI-C reads on an unmasked genome
+```
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/02_juicerUnmasked
+cp ../juicer/* .
+ln -s ../juicer/debug
+ln -s ../juicer/scripts
+ln -s ../juicer/fastq
+ln -s ../juicer/misc
+ln -s ../../01_scnD2run/juicer/references/
+ln -s ../../01_scnD2run/juicer/restriction_sites/
+
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=16
+#SBATCH -t 96:00:00
+#SBATCH -J juiceIt_0
+#SBATCH -o juiceIt_0.o%j
+#SBATCH -e juiceIt_0.e%j
+#SBATCH --mail-user=remkv6@gmail.com
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+cd $SLURM_SUBMIT_DIR
+ulimit -s unlimited
+module use /work/GIF/software/modules
+module load bwa
+module load gnutls/3.5.13-7a3mvfy
+#must be 1.8 jdk
+module load jdk/8u172-b11-rnauqmr
+cd /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/02_juicerUnmasked
+bash scripts/juicer.sh -y restriction_sites/MisAssFixed.Pilon.fasta_MboI.txt -z references/MisAssFixed.Pilon.fasta -p chrom.sizes
+scontrol show job $SLURM_JOB_ID
+
+#This ran for 96hrs on 16cpu and timed out during dedup.
+
+Splitting file and running dedup in parallel.  Deleted dups/ optdups, merged_nodups files.  kept header.
+```
+
+### Run deduplication in parallel
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/02_juicerUnmasked/aligned
+
+split -d  --additional-suffix=merged_sort.txt -n l/64  merged_sort.txt &
+for f in x*txt; do mkdir $f.dir; cd $f.dir; cp ../../* .; ln -s ../../fastq/; ln -s ../../misc/ ;ln -s ../../debug/; ln -s ../../references/;ln -s ../../restriction_sites/;ln -s ../../scripts/;ln -s ../../splits/; mkdir aligned; mv ../$f aligned/merged_sort.txt; cd ../   ;done
+
+for f in x*dir; do echo "cd "$f"; bash scripts/juicer.sh -S dedup -y restriction_sites/MisAssFixed.Pilon.fasta_MboI.txt -z references/MisAssFixed.Pilon.fasta -p chrom.sizes";done >>dedup.sh
+
+
+
+
+
+
+All but three ended in less than 2 days:x40 x02 x13 will require further modification.  obtaining unique lines and removing those that were not finished processing (causes unix to think it is a binary)
+cd ../../x02merged_sort.txt.dir/aligned/
+cat dups.txt merged_nodups.txt merged_sort.txt optdups.txt |sort |uniq -c |awk '$1==1'  >RemainingMergedSort.txt &
+tail -n +9 RemainingMergedSort.txt |sed 's/     //g' |sed 's/ /\t/g' |cut -f 3- |tr "\t" " " >RemainingMergedSort2.txt
+
+cd ../../x13merged_sort.txt.dir/aligned/
+cat dups.txt merged_nodups.txt merged_sort.txt optdups.txt |sort |uniq -c |awk '$1==1'  >RemainingMergedSort.txt &
+tail -n +4 RemainingMergedSort.txt |sed 's/     //g' |sed 's/ /\t/g' |cut -f 3- |tr "\t" " " >RemainingMergedSort2.txt
+
+cd ../../x40merged_sort.txt.dir/aligned/cat
+cat dups.txt merged_nodups.txt merged_sort.txt optdups.txt |sort |uniq -c |awk '$1==1'  >RemainingMergedSort.txt &
+tail -n +4 RemainingMergedSort.txt |sed 's/     //g' |sed 's/ /\t/g' |cut -f 3- |tr "\t" " " >RemainingMergedSort2.txt
+
+
+split -d  --additional-suffix=merged_sort.txt -n l/16  RemainingMergedSort2.txt &
+for f in x*txt; do mkdir $f.dir; cd $f.dir; cp ../../../../* .; ln -s ../../../../fastq/; ln -s ../../../../misc/ ;ln -s ../../../../debug/; ln -s ../../../../references/;ln -s ../../../../restriction_sites/;ln -s ../../../../scripts/;ln -s ../../../../splits/; mkdir aligned; mv ../$f aligned/merged_sort.txt; cd ../   ;done
+
+for f in x*dir; do echo "cd "$f"; bash scripts/juicer.sh -S dedup -y restriction_sites/MisAssFixed.Pilon.fasta_MboI.txt -z references/MisAssFixed.Pilon.fasta -p chrom.sizes";done >>dedup.sh
+cp /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/02_juicerUnmasked/aligned/x02merged_sort.txt.dir/aligned/makeSLURMp.py .
+python makeSLURMp.py 16 dedup.sh
+sbatch dedup_0.sub
+
+#Concatenation and removal of binary lines from merged_nodups.
+cd x02merged_sort.txt.dir/aligned/
+mv merged_nodups.txt merged_nodups.txtOLD
+
+cat merged_nodups.txtOLD x*.dir/aligned/merged_nodups.txt >merged_nodups.txt
+cd ../../x13merged_sort.txt.dir/aligned/
+mv merged_nodups.txt merged_nodups.txtOLD
+cat merged_nodups.txtOLD x*.dir/aligned/merged_nodups.txt >merged_nodups.txt
+cd ../../x40merged_sort.txt.dir/aligned/
+mv merged_nodups.txt merged_nodups.txtOLD
+cat merged_nodups.txtOLD x*.dir/aligned/merged_nodups.txt >merged_nodups.txt
+cd ../../
+cat  x*.dir/aligned/merged_nodups.txt >merged_nodups.txt
+
+
+
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/02_juicerUnmasked/aligned/
+mv merged_sort.txt Round1MergedSort.txt
+mv test_nodups.txt merged_sort.txt
+sbatch  juiceIt_0.sub
+
+For some reason it could not make the hic file, likely due a broken juicer_tools.jar file in the scripts/ folder. # this is due to some split not getting incorporated in order.  Need to sort before running.  
+sort -k2,2d -k6,6d --parallel=16 merged_nodups.txt >Sorted_merged_nodups.txt
+
+module load bwa
+module load gnutls/3.5.13-7a3mvfy
+#must be 1.8 jdk
+module load jdk/8u172-b11-rnauqmr
+java -Xmx2g -jar ../scripts/juicer_tools.jar pre merged_nodups.txt merged_nodups2.hic ../chrom.sizes
+
+takes 7 hours to sort and create hic file
+```
+
+### run 3D DNA pipeline
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/02_juicebox/
+git clone https://github.com/theaidenlab/3d-dna.git
+cd 3d-dna/
+
+module use /work/GIF/software/modules
+module load GIF2/lastz/1.03.73
+module load gnutls/3.5.13-7a3mvfy
+#must be 1.8 jdk
+module load jdk/8u172-b11-rnauqmr
+module load python
+module load parallel/20170322-36gxsog
+bash run-asm-pipeline.sh -m diploid /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/02_juicerUnmasked/aligned/merged_nodups.txt
+
+
+
 ```
