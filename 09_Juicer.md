@@ -1085,7 +1085,4 @@ module load jdk/8u172-b11-rnauqmr
 module load python
 module load parallel/20170322-36gxsog
 bash run-asm-pipeline.sh -m diploid /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/01_scnD2run/juicer/references/MisAssFixed.Pilon.fasta /work/GIF/remkv6/Baum/04_Dovetail2Restart/04_GapFilling/09_JuicerScaff/04_scnHicReads/02_juicerUnmasked/aligned/merged_nodups.txt
-
-
-
 ```
