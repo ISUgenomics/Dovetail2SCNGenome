@@ -561,5 +561,74 @@ less mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../
 #how many are repetitive then?
 By subtraction that is: 13,466 genes
 
+#gene sizes that are not repetitive
+less NonRepetitiveGenes.gff3 |awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+Total:  104,488,696
+Count:  25,180
+Mean:   4,149
+Median: 1,726
+Min:    199
+Max:    465,216
+
+```
+### gene stats of braker masked annotation
+```
+less augustus.hints.gff |awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+Total:  67,011,405
+Count:  22,408
+Mean:   2,990
+Median: 2,015
+Min:    200
+Max:    52,212
+
+```
+
+### gene stats of braker unmasked annotation
+```
+less augustus.hints.gff |awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+Total:  83,144,932
+Count:  35,514
+Mean:   2,341
+Median: 1,546
+Min:    200
+Max:    43,263
+```
+
+### gene stats of maker annotation on old dovetail genome
+```
+/work/GIF/remkv6/Baum/01_SCNDovetailScaffolding
+
+less 12_MakerGenesOrthofinder/DovetailSCNMaker4.all.NOFASTA.gff|awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+Total:  67,168,685
+Count:  22,856
+Mean:   2,938
+Median: 1,811
+Min:    5
+Max:    65,204
+
+```
+
+
+## Round2 of mikado using all ESTs from tylenchida
+```
+less mikado.loci.gff3| awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+Total:  131,514,741
+Count:  39,516
+Mean:   3,328
+Median: 920
+Min:    199
+Max:    465,216
+```
+
+### gene calls from 738 genome
+```
+
+less ../CamTechGenomeComparison/58_Renamatorium/1_genomeNgff/fixed.augustus.gff3|awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+Total:  71,832,760
+Count:  29,769
+Mean:   2,413
+Median: 1,603
+Min:    79
+Max:    65,717
 
 ```
