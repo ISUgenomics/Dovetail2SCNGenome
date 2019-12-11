@@ -111,88 +111,19 @@ ln -s ../../23_Mikado/SCNgenome.fasta
 cp -rf /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/augustus-3.3-fimdyeurm35h63s5mq7lqyrxjryhn3ks/config/ .
 cp -rf Hglycines2/ ../../../../09_BuscoComparison/05_pseudomolecule/config/species/.
 
+ml miniconda2
+conda create -n busco
+source activate busco
+conda install -c bioconda/label/cf201901 busco
 
-#run busco
-echo " ml busco/3.0.1-py2-cuda9-openmpi3-ze7lkie; ml augustus/3.3-py2-cuda9-openmpi3-fimdyeu;ml dafoam/1.0; ml ncbi-blast/2.4.0+;ml hmmer/3.1b2-cuda9-openmpi3-4ab6zzt; export AUGUSTUS_CONFIG_PATH=/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config; export BUSCO_CONFIG_FILE=/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/my-busco.conf; run_BUSCO.py -i SCNgenome.fasta -l /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison//04_590D2/busco-3.0.1-ze7lkiedvzma2wiiehfdwa7usmcgk5wi/nematoda_odb9 -o PseudoBUSCO -m geno -c 15 -s Hglycines2 -f ">busco.sh
 
-#my-busco.conf
-################################################################################
-# BUSCO specific configuration
-# It overrides default values in code and dataset cfg, and is overridden by arguments in command line
-# Uncomment lines when appropriate
-[busco]
-# Input file
-;in = ./sample_data/target.fa
-# Run name, used in output files and folder
-;out = SAMPLE
-# Where to store the output directory
-;out_path = ./sample_data
-# Path to the BUSCO dataset
-;lineage_path = ./sample_data/example
-# Which mode to run (genome / protein / transcriptome)
-;mode = genome
-# How many threads to use for multithreaded steps
-;cpu = 1
-# Domain for augustus retraining, eukaryota or prokaryota
-# Do not change this unless you know exactly why !!!
-;domain = eukaryota
-# Force rewrite if files already exist (True/False)
-;force = False
-# Restart mode (True/False)
-;restart = False
-# Blast e-value
-;evalue = 1e-3
-# Species to use with augustus, for old datasets only
-;species = fly
-# Augustus extra parameters
-# Use single quotes, like this: '--param1=1 --param2=2'
-;augustus_parameters = ''
-# Tmp folder
-;tmp_path = ./tmp/
-# How many candidate regions (contigs, scaffolds) to consider for each BUSCO
-;limit = 3
-# Augustus long mode for retraining (True/False)
-;long = False
-# Quiet mode (True/False)
-;quiet = False
-# Debug logs (True/False), it needs Quiet to be False
-;debug = True
-# tar gzip output files (True/False)
-;gzip = False
-# Force single core for the tblastn step
-;blast_single_core = True
+ml miniconda2; source activate busco; export AUGUSTUS_CONFIG_PATH=/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config; export ; run_BUSCO.py -i SCNgenome.fasta -l /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison//04_590D2/busco-3.0.1-ze7lkiedvzma2wiiehfdwa7usmcgk5wi/nematoda_odb9 -o PseudoBUSCO -m geno -c 15 -s Hglycines2 -f
 
-[tblastn]
-# path to tblastn
-path =  /opt/rit/app/ncbi-blast/2.4.0+/bin/
-
-[makeblastdb]
-# path to makeblastdb
-path =  /opt/rit/app/ncbi-blast/2.4.0+/bin/
-
-[augustus]
-# path to augustus
-path = /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/augustus-3.3-fimdyeurm35h63s5mq7lqyrxjryhn3ks/bin/
-
-[etraining]
-# path to augustus etraining
-path = /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/augustus-3.3-fimdyeurm35h63s5mq7lqyrxjryhn3ks/bin/
-
-# path to augustus perl scripts, redeclare it for each new script
-[gff2gbSmallDNA.pl]
-path = /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/augustus-3.3-fimdyeurm35h63s5mq7lqyrxjryhn3ks/scripts/
-[new_species.pl]
-path = /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/augustus-3.3-fimdyeurm35h63s5mq7lqyrxjryhn3ks/scripts/
-[optimize_augustus.pl]
-path = /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/augustus-3.3-fimdyeurm35h63s5mq7lqyrxjryhn3ks/scripts/
-
-[hmmsearch]
-# path to HMMsearch executable
-path = /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/hmmer-3.1b2-4ab6zzt2z5x2xp2osta2cobfb4dbh3b7/bin/
-
-[Rscript]
-# path to Rscript, if you wish to use the plot tool
-path = /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/r-3.4.3-kaltwmmc7x5pobe6lzwecoicwod5ntpm/bin/
-################################################################################
-
+C:64.6%[S:59.9%,D:4.7%],F:8.8%,M:26.6%,n:982
+634 Complete BUSCOs (C)
+588 Complete and single-copy BUSCOs (S)
+46 Complete and duplicated BUSCOs (D)
+86 Fragmented BUSCOs (F)
+262 Missing BUSCOs (M)
+982 Total BUSCO groups searched
 ```
