@@ -49,3 +49,15 @@ diamond blastx --query effector.fa  -d mikado_proteinsFixed --in mikado_proteins
 less diamond.out |awk 'substr($2,length($2),2)=="1"' |wc
 
 ```
+### Identify secreted proteins
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/32_SignalP
+ml dafoam/1.0
+ml signalp/4.1
+
+signalp -f summary mikado_proteinsFixed.fasta >mikado_proteinsFixed.fasta.out
+
+#how many secreted without transmembrane domains
+less mikado_proteinsFixed.fasta.out |grep "Name=" |grep "YES" |grep "noTM" |wc
+   3267   42471  420764
+```

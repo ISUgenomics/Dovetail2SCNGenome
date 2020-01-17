@@ -127,3 +127,25 @@ C:64.6%[S:59.9%,D:4.7%],F:8.8%,M:26.6%,n:982
 262 Missing BUSCOs (M)
 982 Total BUSCO groups searched
 ```
+
+ ### Run busco on annotated proteins
+ ```
+ #/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/06_BuscoPseudomoleculeProteins
+
+ ml cdbfasta
+ cdbfasta mikado_proteinsFixed.fasta
+
+less mikado_proteinsFixed.fasta |grep ".1" |awk '{print $1}' |sed 's/>//g'|cdbyank mikado_proteinsFixed.fasta.cidx >PrimaryIsoformsMikado_proteinsFixed.fasta
+
+ module use /work/GIF/software/modules
+ ml miniconda2; source activate busco; export AUGUSTUS_CONFIG_PATH=/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config;  run_BUSCO.py -i PrimaryIsoformsMikado_proteinsFixed.fasta -l /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison//04_590D2/busco-3.0.1-ze7lkiedvzma2wiiehfdwa7usmcgk5wi/nematoda_odb9 -o PseudoBUSCO -m prot -c 15 -s Hglycines2 -f
+
+ C:68.6%[S:56.2%,D:12.4%],F:9.0%,M:22.4%,n:982
+ INFO    674 Complete BUSCOs (C)
+ INFO    552 Complete and single-copy BUSCOs (S)
+ INFO    122 Complete and duplicated BUSCOs (D)
+ INFO    88 Fragmented BUSCOs (F)
+ INFO    220 Missing BUSCOs (M)
+ INFO    982 Total BUSCO groups searched
+
+ ```

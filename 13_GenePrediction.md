@@ -632,3 +632,37 @@ Min:    79
 Max:    65,717
 
 ```
+
+### Functional annotation stats
+```
+#interproscan
+less 01_Interpro/interproAnnot.tsv |awk '{print $1}' |sort|uniq|wc
+  25779   25779  639842
+
+#proteins to uniprot
+less 04_ProtsUniprot/mikado_proteins.vs.uniprot_sprot.cul5.1e5.blastp.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1 }' |sort|uniq|wc
+   1604    1604   39727
+
+#transcripts to uniref
+less 05_TransUniprot/mikado_transcripts.vs.uniprot_sprot.cul5.1e5.blastx.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1 }' |sort|uniq|wc
+  12796   12796  317987
+
+#prots to nr
+less 02_Prots2Nr/mikado_proteinsFixed.vs.
+nr.cul5.1e5.blastp.out |grep -v "hypothetical" |grep -v "uncharacterized" |aw
+k '{print $1}' |sort|uniq|wc
+   3056    3056   75814
+
+#transcripts to nt
+ess 03_Transcrips2Nt/mikado_transcripts.vs.nt.cul5.1e5.blastn.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1}' |sort|uniq|wc
+   2266    2266   56298
+
+
+
+#All databases together
+cat <(less 01_Interpro/interproAnnot.tsv |awk '{print $1}' |sort|uniq) <(less 02_Prots2Nr/mikado_proteinsFixed.vs.nr.cul5.1e5.blastp.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1}' |sort|uniq) <( less 03_Transcrips2Nt/mikado_transcripts.vs.nt.cul5.1e5.blastn.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1}' |sort|uniq) <(less 04_ProtsUniprot/mikado_proteins.vs.uniprot_sprot.cul5.1e5.blastp.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1 }' |sort|uniq) <(less 05_TransUniprot/mikado_transcripts.vs.uniprot_sprot.cul5.1e5.blastx.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1 }' |sort|uniq) |sort|uniq|wc
+  26951   26951  668844
+
+
+
+```
