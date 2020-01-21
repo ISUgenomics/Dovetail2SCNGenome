@@ -247,5 +247,132 @@ bedtools annotate -both -i SCNwindows.bed -files RiboCoords.bed |awk '{print $1,
  less ../../../../29_Effectors/01_Diamond/diamond.out |awk '{print $2}' |grep -f - mikado.loci.gff3 |awk '$3=="exon"' |tr " " "\t">diamondEffector.bed
 bedtools annotate -both -i SCNwindows.bed -files diamondEffector.bed |awk '{print $1,$2,$3,$5}' >DiamondEffector.histogram
 
+#circos.conf
+###################################################################
+karyotype = ./karyotype.conf
+chromosomes_units = 100000
+  <<include ideogram.conf>>
+  <<include ticks.conf>>
+  <<include bands.conf>>
 
+  <links>
+  <link>
+    file=SyntenicRibbons.conf
+    radius = 0.69r
+    bezier_radius = 0.1r
+    thickness = 1
+    ribbon = yes
+  </link>
+  </links>
+<plots>
+ <plot>
+   type = histogram
+   fill_color =black
+   file =Repeats.histogram
+   r1 = 0.99r
+   r0 = 0.94r
+   orientation = out
+   extend_bin  = no
+   <backgrounds>
+     <background>
+     spacing   = 0.05r
+   color = yellow
+    thickness = 3u
+    </background>
+  </backgrounds>
+</plot>
+ <plot>
+   type = histogram
+   fill_color =black
+   file =TRF.histogram
+   r1 = 0.94r
+   r0 = 0.89r
+   orientation = out
+   extend_bin  = no
+   <backgrounds>
+     <background>
+     spacing   = 0.05r
+   color = purple
+    thickness = 3u
+    </background>
+  </backgrounds>
+</plot>
+ <plot>
+   type = histogram
+   fill_color =black
+   file =Ribosomal.histogram
+   r1 = 0.89r
+   r0 = 0.84r
+   orientation = out
+   extend_bin  = no
+   <backgrounds>
+     <background>
+     spacing   = 0.05r
+   color = blue
+    thickness = 3u
+    </background>
+  </backgrounds>
+</plot>
+
+ <plot>
+   type = histogram
+   fill_color =black
+   file =Genes.histogram
+   r1 = 0.84r
+   r0 = 0.79r
+   orientation = out
+   extend_bin  = no
+   <backgrounds>
+     <background>
+     spacing   = 0.05r
+   color = red
+    thickness = 3u
+    </background>
+  </backgrounds>
+</plot>
+ <plot>
+   type = histogram
+   fill_color =black
+   file =Effector.histogram
+   r1 = 0.79r
+   r0 = 0.74r
+   orientation = out
+   extend_bin  = no
+   <backgrounds>
+     <background>
+     spacing   = 0.05r
+   color = green
+    thickness = 3u
+    </background>
+  </backgrounds>
+</plot>
+
+ <plot>
+   type = histogram
+   fill_color =black
+   file =DiamondEffector.histogram
+   r1 = 0.74r
+   r0 = 0.69r
+   orientation = out
+   extend_bin  = no
+   <backgrounds>
+     <background>
+     spacing   = 0.05r
+   color = orange
+    thickness = 3u
+    </background>
+  </backgrounds>
+</plot>
+
+
+</plots>
+<image>
+  <<include /shared/software/GIF/programs/circos/0.69.2/etc/image.conf>>
+angle_offset* = -46
+</image>
+<<include /shared/software/GIF/programs/circos/0.69.2/etc/colors_fonts_patterns.conf>>
+ <<include ./housekeeping.conf>>
+ chromosomes_order = scaffold_323,scaffold_106,scaffold_384,scaffold_228,scaffold_218,scaffold_177,scaffold_86,scaffold_36,scaffold_33,scaffold_135,scaffold_425,scaffold_401,scaffold_289,scaffold_68,scaffold_60,scaffold_190,scaffold_122,scaffold_158,scaffold_80,scaffold_165,scaffold_585,scaffold_49,scaffold_2,Scaffold_8,scaffold_64,Scaffold_5,scaffold_326,scaffold_57,scaffold_295,scaffold_223,scaffold_170,scaffold_446,scaffold_39,scaffold_105,scaffold_15,scaffold_84,scaffold_248,scaffold_456,scaffold_334,scaffold_11,scaffold_129,scaffold_227,scaffold_308,scaffold_498,scaffold_47,scaffold_118,scaffold_432,scaffold_372,scaffold_408,Scaffold_3,scaffold_238,scaffold_114,scaffold_307,scaffold_46,scaffold_294,scaffold_40,scaffold_482,scaffold_302,scaffold_471,scaffold_255,scaffold_184,scaffold_50,scaffold_92,scaffold_193,scaffold_101,scaffold_216,scaffold_333,scaffold_23,scaffold_93,Scaffold_2,scaffold_41,scaffold_303,scaffold_5,scaffold_127,scaffold_229,scaffold_438,scaffold_592,scaffold_70,scaffold_462,scaffold_465,scaffold_222,Scaffold_6,scaffold_58,scaffold_142,scaffold_496,scaffold_197,scaffold_83,scaffold_266,scaffold_1,scaffold_51,scaffold_451,scaffold_148,scaffold_424,scaffold_22,scaffold_527,scaffold_418,scaffold_87,Scaffold_7,scaffold_53,scaffold_261,scaffold_287,scaffold_146,scaffold_377,scaffold_155,scaffold_19,scaffold_281,scaffold_285,scaffold_380,scaffold_251,scaffold_111,scaffold_89,scaffold_63,scaffold_95,scaffold_231,scaffold_359,Scaffold_1,scaffold_257,scaffold_79,scaffold_192,scaffold_291,scaffold_282,scaffold_62,scaffold_99,scaffold_30,scaffold_442,scaffold_413,scaffold_356,scaffold_171,Scaffold_4,scaffold_504,scaffold_125,scaffold_45,scaffold_239,scaffold_67,scaffold_16,scaffold_59,scaffold_109,scaffold_12,scaffold_150,scaffold_117,scaffold_73,scaffold_684,Scaffold_9,scaffold_563,scaffold_615,scaffold_427,scaffold_521,scaffold_180,scaffold_113,scaffold_378,scaffold_360,scaffold_123,scaffold_21,scaffold_56,scaffold_444,scaffold_43,scaffold_416
+
+###################################################################
 ```
