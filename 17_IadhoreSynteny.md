@@ -112,3 +112,140 @@ Min:    60
 Max:    509,173
 
 ```
+
+### iadhore synteny with 738 genome
+```
+ln -s ../fixed.augustus.gff3
+ln -s ../../01_X12/mikado.loci.gff3
+
+
+
+#Primary protein to primary protein isoform blastp
+
+awk '{print $2}' 7382mikado.blastout |cdbyank mikado_proteinsFixed.fasta.cidx |bioawk -c fastx '{print $name,length($seq)}' |paste 7382mikado.blastout - |awk '($4/$14)>.5 && $3>70' |awk '{print $1,$2,"Family"substr($1,9,length($1))}' |sed 's/\.t/\t/2' |awk '{print $1,$3"\n"$2,$3}' |tr " " "\t" >Orthologues.list
+
+less Orthologues.list |sed 's/\.t/\t/g' |sed 's/\./\t/2' |awk '{print $1"\t"$3}' >FixedOrthologues.list
+
+
+grep ">" ../augustus.aa |sed 's/>//g' |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq>738Genes
+grep ">" mikado_proteinsFixed.fasta |sed 's/>//g' |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq>MikadoGenes
+cat GenesInFixedOrthologues.list 738Genes|sort|uniq -c |awk '$1==1 {print $2}'|awk '{print $1"\tFamily4727"NR}' >Missing738Genes.list
+cat GenesInFixedOrthologues.list MikadoGenes |sort|uniq -c |awk '$1==1 {print $2}'  |awk '{print $1"\tFamily4726"NR}' >MissingPseudomoleculeGenes.list
+cat FixedOrthologues.list MissingPseudomoleculeGenes.list Missing738Genes.list >FixedOrthologues.list2
+
+
+
+mkdir query
+cd query
+awk '$3=="gene"' ../mikado.loci.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' |awk '{print $9$7,$1}' |awk '{print >> $2 ".lst"; close($2)}'
+
+sed -i 's/ .*//g' *.lst
+ls *lst >input.txt
+#This can vary also if you have periods "." in your gene names.
+ paste <(cut -f 1 -d "." input.txt) <(awk '{print "query/"$1}' input.txt)>query.ini
+
+cd ../
+mkdir subject
+cd subject/
+awk '$3=="gene"' ../fixed.augustus.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' |awk '{print $9$7,$1}' |awk '{print >> $2 ".lst"; close
+($2)}'
+sed -i 's/ .*//g' *.lst
+ls *lst >input.txt
+paste <(cut -f 1 -d "." input.txt) <(awk '{print "subject/"$1}' input.txt)>subject.ini
+
+cat query/query.ini subject/subject.ini |tr "\t" " " >iadhore.ini
+vi iadhore.ini
+
+ml GIF2/iAdHoRe/3.0.01
+i-adhore iadhore.ini
+```
+
+### 738 to pseudo circos plot
+```
+mkdir 01_circos
+cd 01_circos/
+ln -s ../mikado.loci.gff3
+ln -s ../fixed.augustus.gff3
+ln -s ../../genome738sl.polished.mitoFixed.fa
+ln -s ../../../01_X12/SCNgenome.fasta
+ln -s ../output/segments.txt
+
+awk '$3=="gene"' mikado.loci.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' >mikadoGrepMod
+awk '$3=="gene"' fixed.augustus.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' >738GrepMod
+
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $3}' |sed '/^$/d' |while read line; do grep -w $line mikadoGrepMod; done |awk '{if($7=="+") {print $5} else {print $4}}' >Col3
+298333  [2019-12-18 10:58:26] less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $4}' |sed '/^$/d' |while read line; do grep -w $line mikadoGrepMod; done |awk '{if($7=="+") {print $4} else {print $5}}' >Col4
+298334  [2019-12-18 10:58:27] less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $7}' |sed '/^$/d' |while read line; do grep -m 1 -w $line 738GrepMod; done |awk '{if($7=="+") {print $5} else {print $4}}' >Col7
+298335  [2019-12-18 10:58:28] less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $8}' |sed '/^$/d' |while read line; do grep -m 1 -w $line 738GrepMod; done |awk '{if($7=="+") {print $4} else {print $5}}' >Col8
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" "\t" |tr "#" "\n" |awk '$5!=$1' |awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $2,$6}' | paste - Col3 Col4 Col7 Col8 |awk '{print $1,$3,$4,$2,$5,$6}' >SyntenicRibbons.conf
+
+
+
+
+
+bioawk -c fastx '{print $name,length($seq)}' SCNgenome.fasta |awk '{print "chr","-",$1,$1,"0",$2,"blue"}' >TN10Karyotype.conf
+bioawk -c fastx '{print $name,length($seq)}'  genome738sl.polished.mitoFixed.fa |awk '{print "chr","-",$1,$1,"0",$2,"green"}' >
+738Karyotype.conf
+
+awk '{print $1}' SyntenicRibbons.conf|while read line; do echo "awk '\$3==\""$line"\"' TN10Karyotype.conf >>tmpKaryotype.conf1";done >TN10Karyotype.sh
+sh TN10Karyotype.sh
+awk '{print $4}' SyntenicRibbons.conf|while read line; do echo "awk '\$3==\""$line"\"' 738Karyotype.conf >>tmpKaryotype.conf2";done >X12Karyotype.sh
+ sh X12Karyotype.sh
+cat <(sort tmpKaryotype.conf1 |uniq) <(sort tmpKaryotype.conf2 |uniq) >karyotype.conf
+circos -conf circos.conf
+
+
+vi circos.conf
+vi ticks.conf
+vi bands.conf
+vi ideogram.conf
+cp /work/GIF/software/programs/circos/0.69-4/etc/housekeeping.conf .
+vi housekeeping.conf
+
+sort tmpKaryotype.conf1 |uniq|awk '{print $3}' |tr "\n" "," |sed 's/.$//' |awk '{print "circos-tools-0.22/tools/orderchr/bin/orderchr -links SyntenicRibbons.conf -karyotype karyotype.conf - "$0" -static_rx "$0 }' |less
+
+wget http://circos.ca/distribution/circos-tools-0.22.tgz
+tar -zxvf circos-tools-0.22.tgz
+circos-tools-0.22/tools/orderchr/bin/orderchr -links SyntenicRibbons.conf -karyotype karyotype.conf - Scaffold_1,Scaffold_2,Sca
+ffold_3,Scaffold_4,Scaffold_5,Scaffold_6,Scaffold_7,Scaffold_8,Scaffold_9 -static_rx Scaffold_1,Scaffold_2,Scaffold_3,Scaffold_4,Scaffold_5,Scaffold_6,Scaffo
+ld_7,Scaffold_8,Scaffold_9
+
+ml GIF2/circos
+circos -conf circos.conf
+
+
+
+less SyntenicRibbons.conf |awk '{print $3-$2}' |summary.sh
+Total:  12,465,597
+Count:  247
+Mean:   50,468
+Median: 36,444
+Min:    4,386
+Max:    289,224
+
+
+```
+### Make circos histograms representing coverage
+```
+ln -s ../../../../10_RepeatModeler/SCNgenome.fasta.out.gff
+
+less TN10Karyotype.conf |awk '{print $3,$5,$6}' |tr " " "\t" >chrom.sizes
+
+bedtools annotate -both -i SCNwindows.bed -files SCNgenome.fasta.out.gff |awk '{print $1,$2,$3,$5}' >Repeats.histogram
+
+bedtools makewindows -w 10000 -b chrom.sizes >SCNwindows.bed
+ bedtools annotate -both -i SCNwindows.bed -files <(awk '$3=="exon"'  mikado.loci.gff3) |awk '{print $1,$2,$3,$5}' >Genes.histogram
+
+less -S 01_TRF/trf.out |awk -v x=0 '{if (substr($1,1,1)=="@") {x=$1} else {print x,$1,$2}}' |sort|uniq|tr " " "\t" |sed 's/@//g'   >TRF.bed
+bedtools annotate -both -i SCNwindows.bed -files TRF.bed |awk '{print $1,$2,$3,$5}' >TRF.histogram
+
+bedtools annotate -both -i SCNwindows.bed -files RiboCoords.bed |awk '{print $1,$2,$3,$5}' >Ribosomal.histogram
+
+ bedtools annotate -both -i SCNwindows.bed -files <(awk '$3=="exon"' SCNgenome.effector.gff3) |awk '{print $1,$2,$3,$5}' >Effector.histogram
+
+
+ less ../../../../29_Effectors/01_Diamond/diamond.out |awk '{print $2}' |grep -f - mikado.loci.gff3 |awk '$3=="exon"' |tr " " "\t">diamondEffector.bed
+bedtools annotate -both -i SCNwindows.bed -files diamondEffector.bed |awk '{print $1,$2,$3,$5}' >DiamondEffector.histogram
+
+
+```
