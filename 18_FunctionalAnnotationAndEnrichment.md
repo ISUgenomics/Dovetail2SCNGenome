@@ -63,9 +63,10 @@ less AllGenesWWOannot.gffmod |sed 's/\t//9' |sed 's/\t/;/9' |sed 's/$/;/g' |past
 #combine with exons,genes, utrs, cds, etc annotations
 awk '$3!="mRNA"' ../mikado.loci.gff3 |grep -v "#" |cat - AllGenesAnnotated.gff >AllTypesWWOAnnotationsDisorganized.gff
 
+#get the proper order for the gff, so it will show up in jbrowse
  perl gff3sort/gff3sort.pl --precise --chr_order natural AllTypesWWOAnnotationsDisorganized.gff > SCNgenomeFunctionalGeneAnnotations.gff3
 
- 
+
 
 
 ```
