@@ -103,6 +103,8 @@ Mean:   63,365
 Median: 40,171
 Min:    987
 Max:    502,222
+
+#some false alignments here,i.e. super small to super large regions
 [remkv6@condo075 01_Circos]$ less SyntenicRibbons.conf |awk '{print $3-$2}' |summary.sh
 Total:  63,601,468
 Count:  898
@@ -134,6 +136,8 @@ cat GenesInFixedOrthologues.list MikadoGenes |sort|uniq -c |awk '$1==1 {print $2
 cat FixedOrthologues.list MissingPseudomoleculeGenes.list Missing738Genes.list >FixedOrthologues.list2
 
 
+#create non-family based orthologues, to match the synteny calls for x12
+awk '{print $2}' 7382mikado.blastout |cdbyank ../mikado_proteinsFixed.fasta.cidx |bioawk -c fastx '{print $name,length($seq)}' |paste 7382mikado.blastout - |awk '($4/$14)>.5 && $3>70' |awk '{print $1,$2}' |sort -u -k1,1V >PairwiseOrthology.list
 
 mkdir query
 cd query
@@ -162,6 +166,10 @@ i-adhore iadhore.ini
 
 ### 738 to pseudo circos plot
 ```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/31_Synteny/02_738Assembly/02_iadhore/01_circos
+
+#circos version 0.69.2
+
 mkdir 01_circos
 cd 01_circos/
 ln -s ../mikado.loci.gff3
@@ -174,9 +182,9 @@ awk '$3=="gene"' mikado.loci.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' >mikadoGrepMod
 awk '$3=="gene"' fixed.augustus.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' >738GrepMod
 
 less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $3}' |sed '/^$/d' |while read line; do grep -w $line mikadoGrepMod; done |awk '{if($7=="+") {print $5} else {print $4}}' >Col3
-298333  [2019-12-18 10:58:26] less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $4}' |sed '/^$/d' |while read line; do grep -w $line mikadoGrepMod; done |awk '{if($7=="+") {print $4} else {print $5}}' >Col4
-298334  [2019-12-18 10:58:27] less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $7}' |sed '/^$/d' |while read line; do grep -m 1 -w $line 738GrepMod; done |awk '{if($7=="+") {print $5} else {print $4}}' >Col7
-298335  [2019-12-18 10:58:28] less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $8}' |sed '/^$/d' |while read line; do grep -m 1 -w $line 738GrepMod; done |awk '{if($7=="+") {print $4} else {print $5}}' >Col8
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $4}' |sed '/^$/d' |while read line; do grep -w $line mikadoGrepMod; done |awk '{if($7=="+") {print $4} else {print $5}}' >Col4
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $7}' |sed '/^$/d' |while read line; do grep -m 1 -w $line 738GrepMod; done |awk '{if($7=="+") {print $5} else {print $4}}' >Col7
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $8}' |sed '/^$/d' |while read line; do grep -m 1 -w $line 738GrepMod; done |awk '{if($7=="+") {print $4} else {print $5}}' >Col8
 less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" "\t" |tr "#" "\n" |awk '$5!=$1' |awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $2,$6}' | paste - Col3 Col4 Col7 Col8 |awk '{print $1,$3,$4,$2,$5,$6}' >SyntenicRibbons.conf
 
 
@@ -227,6 +235,8 @@ Max:    289,224
 ```
 ### Make circos histograms representing coverage
 ```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/31_Synteny/02_738Assembly/02_iadhore/01_circos
+
 ln -s ../../../../10_RepeatModeler/SCNgenome.fasta.out.gff
 
 less TN10Karyotype.conf |awk '{print $3,$5,$6}' |tr " " "\t" >chrom.sizes
@@ -375,4 +385,65 @@ angle_offset* = -46
  chromosomes_order = scaffold_323,scaffold_106,scaffold_384,scaffold_228,scaffold_218,scaffold_177,scaffold_86,scaffold_36,scaffold_33,scaffold_135,scaffold_425,scaffold_401,scaffold_289,scaffold_68,scaffold_60,scaffold_190,scaffold_122,scaffold_158,scaffold_80,scaffold_165,scaffold_585,scaffold_49,scaffold_2,Scaffold_8,scaffold_64,Scaffold_5,scaffold_326,scaffold_57,scaffold_295,scaffold_223,scaffold_170,scaffold_446,scaffold_39,scaffold_105,scaffold_15,scaffold_84,scaffold_248,scaffold_456,scaffold_334,scaffold_11,scaffold_129,scaffold_227,scaffold_308,scaffold_498,scaffold_47,scaffold_118,scaffold_432,scaffold_372,scaffold_408,Scaffold_3,scaffold_238,scaffold_114,scaffold_307,scaffold_46,scaffold_294,scaffold_40,scaffold_482,scaffold_302,scaffold_471,scaffold_255,scaffold_184,scaffold_50,scaffold_92,scaffold_193,scaffold_101,scaffold_216,scaffold_333,scaffold_23,scaffold_93,Scaffold_2,scaffold_41,scaffold_303,scaffold_5,scaffold_127,scaffold_229,scaffold_438,scaffold_592,scaffold_70,scaffold_462,scaffold_465,scaffold_222,Scaffold_6,scaffold_58,scaffold_142,scaffold_496,scaffold_197,scaffold_83,scaffold_266,scaffold_1,scaffold_51,scaffold_451,scaffold_148,scaffold_424,scaffold_22,scaffold_527,scaffold_418,scaffold_87,Scaffold_7,scaffold_53,scaffold_261,scaffold_287,scaffold_146,scaffold_377,scaffold_155,scaffold_19,scaffold_281,scaffold_285,scaffold_380,scaffold_251,scaffold_111,scaffold_89,scaffold_63,scaffold_95,scaffold_231,scaffold_359,Scaffold_1,scaffold_257,scaffold_79,scaffold_192,scaffold_291,scaffold_282,scaffold_62,scaffold_99,scaffold_30,scaffold_442,scaffold_413,scaffold_356,scaffold_171,Scaffold_4,scaffold_504,scaffold_125,scaffold_45,scaffold_239,scaffold_67,scaffold_16,scaffold_59,scaffold_109,scaffold_12,scaffold_150,scaffold_117,scaffold_73,scaffold_684,Scaffold_9,scaffold_563,scaffold_615,scaffold_427,scaffold_521,scaffold_180,scaffold_113,scaffold_378,scaffold_360,scaffold_123,scaffold_21,scaffold_56,scaffold_444,scaffold_43,scaffold_416
 
 ###################################################################
+```
+
+### Redo 738 to pseudo synteny using mikado genes mapped to 738
+
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/31_Synteny/02_738Assembly/02_iadhore/gmapMikadoGenes
+
+ln -s ../../../01_X12/03_mapOurGenes/mikado_transcripts.fasta
+ln -s ../01_circos/genome738sl.polished.mitoFixed.fa
+
+echo "sh runGmap.sh genome738sl.polished.mitoFixed /work/GIF/remkv6/Baum/04_Dovetail2Restart/31_Synteny/02_738Assembly/02_iadhore/gmapMikadoGenes/ genome738sl.polished.mitoFixed.fa mikado_transcripts.fasta" >gmap.sh
+
+less genome738sl.polished.mikado_transcripts.gff3 |awk '$3=="gene"' |grep "path1" |cut -f 9 |awk '{print $1,$1}' |sed 's/\.path/\t/2' |sed 's/;/\t/1' |sed 's/ID=//g' |tr " " "\t" |cut -f 1,3 >Orthologues.list
+
+cd ..
+# Make the query files for iadhore
+
+cd subject/
+
+awk '$3=="gene"' ../gmapMikadoGenes/genome738sl.polished.mikado_transcripts.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' |awk '{print $9$7,$1}' |grep "\.1\.path1" |awk '{print >> $2 ".lst"; close ($2)}'
+ sed -i 's/ .*//g' *.lst
+ ls *lst >input.txt
+ paste <(cut -f 1 -d "." input.txt) <(awk '{print "subject/"$1}' input.txt)>subject.ini
+ #removed a few scaffolds from the iadhore.ini that did not have genes mapped to them
+
+ cat gmapMikadoGenes/Orthologues.list |grep "\.1\.path1" >GmapOrthologues.list
+ sed 's/\.1/\t/2'  GmapOrthologues.list |awk '{print $2,$1}' |tr " " "\t"  >FixedGmapOrthologues.list
+
+#modified the iadhore.ini file parameters to match the x12 comparison
+blast_table=FixedGmapOrthologues.list
+prob_cutoff=0.001
+anchor_points=3
+number_of_threads=16
+visualizeAlignment=false
+output_path= output
+alignment_method=gg2
+gap_size=5
+cluster_gap=15
+level_2_only=true
+q_value=.01
+
+ i-adhore iadhore.ini
+
+
+#Get syntenic ribbons
+ awk '$3=="gene"' ../gmapMikadoGenes/genome738sl.polished.mikado_transcripts.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' |grep "\.1\.path1" >738GrepMod
+
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $3}' |sed '/^$/d' |while read line; do grep -w $line mikadoGrepMod; done |awk '{if($7=="+") {print $5} else {print $4}}' >Col3
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $4}' |sed '/^$/d' |while read line; do grep -w $line mikadoGrepMod; done |awk '{if($7=="+") {print $4} else {print $5}}' >Col4
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $7}' |sed '/^$/d' |while read line; do grep -m 1 -w $line 738GrepMod; done |awk '{if($7=="+") {print $5} else {print $4}}' >Col7
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" " " |tr "#" "\n" |awk '$5!=$1'|awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $8}' |sed '/^$/d' |while read line; do grep -m 1 -w $line 738GrepMod; done |awk '{if($7=="+") {print $4} else {print $5}}' >Col8
+less segments.txt |awk 'NR>1' |awk '{if(NR%2) {print "#"$3,$4,$5,$6}else {print $3,$4,$5,$6}}' |tr "\n" "\t" |tr "#" "\n" |awk '$5!=$1' |awk '{if($5=="Pseudomolecule") {print $5,$6,$7,$8,$1,$2,$3,$4} else {print $1,$2,$3,$4,$5,$6,$7,$8}}' |awk '{print $2,$6}' | paste - Col3 Col4 Col7 Col8 |awk '{print $1,$3,$4,$2,$5,$6}' >SyntenicRibbons.conf
+
+less SyntenicRibbons.conf |awk '{print $3-$2}' |summary.sh
+Total:  67,013,343
+Count:  1,547
+Mean:   43,318
+Median: 26,042
+Min:    11
+Max:    533,651
+
 ```
