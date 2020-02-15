@@ -54,15 +54,15 @@ Total                  207861       46760327     29.92%
 ### Get gene counts that are not repetitive
 ```
 #use EDTA repeats
-less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |cut -f 9 |sed 's/\./\t/3' |awk '{print $1}' |sort|uniq |wc -l
+less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq |wc -l
 28169
 
 #Use EDTA repeats and TRF repeats
-less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |bedtools intersect -v -wo -a - -b ../../31_Synteny/02_738Assembly/02_iadhore/01_circos/TRF.bed |cut -f 9 |sed 's/\./\t/3' |awk '{print $1}' |sort|uniq |wc -l
+less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |bedtools intersect -v -wo -a - -b ../../31_Synteny/02_738Assembly/02_iadhore/01_circos/TRF.bed |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq |wc -l
 27019
 
 #Use repeatmodeler repeats, EDTA, and TRF
-less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |bedtools intersect -v -wo -a - -b ../../31_Synteny/02_738Assembly/02_iadhore/01_circos/TRF.bed |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff  |cut -f 9 |sed 's/\./\t/3' |awk '{print $1}' |sort|uniq |wc -l
+less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |bedtools intersect -v -wo -a - -b ../../31_Synteny/02_738Assembly/02_iadhore/01_circos/TRF.bed |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff  |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq |wc -l
 27019
 
 

@@ -149,3 +149,50 @@ less mikado_proteinsFixed.fasta |grep ".1" |awk '{print $1}' |sed 's/>//g'|cdbya
  INFO    982 Total BUSCO groups searched
 
  ```
+### Check buscos via blast to see how many are missing
+```
+ ln -s  /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison//04_590D2/busco-3.0.1-ze7lkiedvzma2wiiehfdwa7usmcgk5wi/nematoda_odb9/ancestral
+ln -s ../06_BuscoPseudomoleculeProteins/mikado_proteinsFixed.fasta
+ln -s ../06_BuscoPseudomoleculeProteins/mikado_proteinsFixed.fasta.cidx
+makeblastdb -in mikado_proteinsFixed.fasta -dbtype prot
+
+cdbfasta ancestral
+blastp -db mikado_proteinsFixed.fasta -query ancestral -num_threads 16 -outfmt 6 -out ancestral2SCN.blastout
+
+#create table adding protein lengths
+sort -u -k1,1 ancestral2SCN.blastout |awk '{print $1}' |cdbyank ancestral.cidx |bioawk -c fastx '{print $name,length($seq)}' |paste <(sort -u -k1,1 ancestral2SCN.blastout) - >AddBUSCOlength.blastout
+
+less AddBUSCOlength.blastout |awk '{print $2}' |while read line; do grep -m 1 -w $line mikado.lengths ;done|paste AddBUSCOlength.blastout - >AddBUSCOandMikadolength.blastout
+
+ #how many busco genes were found with only an evalue constraint
+ less AddBUSCOandMikadolength.blastout |awk '$11<.01' |wc
+    948   15168  118326
+
+#How many busco genes were found with an evalue constraint and a length constraint of 1.6x to .4x maximum?
+less AddBUSCOandMikadolength.blastout |awk '$11<.01' |awk '{print $14/$16}' |awk '$1<1.6 && $1>.4' |wc
+    788     788    6915
+
+
+
+By just evalue constraints, missing only from protein busco..
+less missing_busco_list_PseudoBUSCO.tsv |grep -v "#" |grep -f - ../../09_ManualBlastsOfBuscoGenes/AddBUSCOandMikadolength.blastout |awk '$11<.01' |wc
+    187    2992   23656
+
+
+What is the median evalue of those genes that were called as missing?
+less missing_busco_list_PseudoBUSCO.tsv |grep -v "#" |grep -f - ../../09_ManualBlastsOfBuscoGenes/AddBUSCOandMikadolength.blastout |awk '$11<.01' |awk '{print $11*1000000000000000000000000000000}' |summary.sh
+Total:  24,926,427,861,843,795,432,106,360,832
+Count:  90
+Mean:   276,960,309,576,042,158,487,502,848
+Median: 5,800,000,000,000
+Min:    0
+Max:    8,999,999,999,999,999,844,710,088,704
+
+awk '{print 5800000000000/1000000000000000000000000000000}' missing_busco_list_PseudoBUSCO.tsv |less
+5.8e-18
+
+#Busco total by addition of .01 and 1.6x and 0.4x length
+less missing_busco_list_PseudoBUSCO.tsv |grep -v "#" |grep -f - ../../09_ManualBlastsOfBuscoGenes/AddBUSCOandMikadolength.blastout |awk '$11<.01' |awk '{print $14/$16}' |awk '$1<1.6 && $1>.4' |wc
+   141     141    1225
+ 141 + 674 = 815 == 815/982 == 82.99%
+```
