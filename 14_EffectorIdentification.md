@@ -30,9 +30,17 @@ gmap -D $dbloc -d $dbname -B 5 -t 16  --min-trimmed-coverage=0.5 --input-buffer-
 awk '$3=="gene"' SCNgenome.effector.gff3 |wc
    126    1134   18667
 
+
+less SCNgenome.effector.gff3 |awk '$3=="CDS"' |bedtools intersect -wo -b - -a ../25_AnnotateGenes/mikado.loci.gff3  |sed 's/ID=//g' |sed 's/;/\t/g' |awk '$3=="mRNA"' |cut -f 9 |sed 's/\./\t/2' |cut -f 1 |sort|uniq|wc
+    132     132    3008
+
+less SCNgenome.effector.gff3 |awk '$3=="CDS"' |bedtools intersect -wo -b - -a ../25_AnnotateGenes/mikado.loci.gff3  |sed 's/ID=//g' |sed 's/;/\t/g' |awk '$3=="mRNA"' |cut -f 9 |sed 's/\./\t/2' |cut -f 1 |sort|uniq >GmappedEffectorsGene.list
+
+#How many of these are secreted?
+cat SecretedGenes.list ../29_Effectors/GmappedEffectorsGene.list |sort|uniq -c |awk '$1=="2" ' |wc
+     54     108    1665
+
 ```
-
-
 
 
 ### use diamond to find conserved effector proteins
@@ -46,9 +54,21 @@ diamond blastx --query effector.fa  -d mikado_proteinsFixed --in mikado_proteins
   --id 0.5 >diamond.out
 
 # how many primary isoforms meet the above criteria?
-less diamond.out |awk 'substr($2,length($2),2)=="1"' |wc
+less diamond.out |awk 'substr($2,length($2),2)=="1" {print $2}' |sort|uniq |wc
+    386     386    9580
+
+less diamond.out |cut -f 2 |sed 's/\./\t/2' |cut -f 1 |sort|uniq|wc
+    386     386    8808
+
+less diamond.out |awk 'substr($2,length($2),2)=="1" {print $2}' |sort|uniq |sed 's/\./\t/2' |cut -f 1 >diamondEffectorGenes.list
+
+#How many of these are secrted?
+cat SecretedGenes.list ../29_Effectors/01_Diamond/diamondEffectorGenes.list |sort|uniq -c |awk '$1=="2" ' |wc
+    141     282    4352
 
 ```
+
+
 ### Identify secreted proteins
 ```
 #/work/GIF/remkv6/Baum/04_Dovetail2Restart/32_SignalP
@@ -58,6 +78,9 @@ ml signalp/4.1
 signalp -f summary mikado_proteinsFixed.fasta >mikado_proteinsFixed.fasta.out
 
 #how many secreted without transmembrane domains
-less mikado_proteinsFixed.fasta.out |grep "Name=" |grep "YES" |grep "noTM" |wc
-   3267   42471  420764
+less mikado_proteinsFixed.fasta.out |grep "SP='YES'"|grep "SignalP-noTM" |cut -f 1 |sed 's/\./\t/2' |sed 's/Name=//g' |cut -f 1 |sort|uniq |wc
+   3152    3152   71830
+
+less mikado_proteinsFixed.fasta.out |grep "SP='YES'"|grep "SignalP-noTM" |cut -f 1 |sed 's/\./\t/2' |sed 's/Name=//g' |cut -f 1 |sort|uniq >SecretedGenes.list
+
 ```

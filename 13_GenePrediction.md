@@ -663,6 +663,53 @@ ess 03_Transcrips2Nt/mikado_transcripts.vs.nt.cul5.1e5.blastn.out |grep -v "hypo
 cat <(less 01_Interpro/interproAnnot.tsv |awk '{print $1}' |sort|uniq) <(less 02_Prots2Nr/mikado_proteinsFixed.vs.nr.cul5.1e5.blastp.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1}' |sort|uniq) <( less 03_Transcrips2Nt/mikado_transcripts.vs.nt.cul5.1e5.blastn.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1}' |sort|uniq) <(less 04_ProtsUniprot/mikado_proteins.vs.uniprot_sprot.cul5.1e5.blastp.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1 }' |sort|uniq) <(less 05_TransUniprot/mikado_transcripts.vs.uniprot_sprot.cul5.1e5.blastx.out |grep -v "hypothetical" |grep -v "uncharacterized" |awk '{print $1 }' |sort|uniq) |sort|uniq|wc
   26951   26951  668844
 
+````
+
+##  Filter Mikado Genes by expression and Repeats to obtain a final count
+```
+# Every genes name
+awk '$3=="gene"' mikado.loci.gff3 |cut -f 9 |sort|uniq|sed 's/ID=//g' |sed 's/;/\t/1' |cut -f 1 >AllGenes.list
+wc AllGenes.list
+ 39516  39516 900462 AllGenes.list
+
+# Genes that have a 50% overlap with a repeat from EDTA
+bedtools intersect -f .5 -wo -a <(awk '$3=="gene"' mikado.loci.gff3) -b ../33_EDTA/EDTA/SCNgenome.fasta.EDTA.TEanno.gff |cut -f 9 |sort|uniq|sed 's/ID=//g' |sed 's/;/\t/1' |cut -f 1 >RepeatGenes.list
+wc RepeatGenes.list
+8316   8316 189033 RepeatGenes.list
+
+less ../38_Expression/GeneCounts |awk '$7<2' |cut -f 1 |sed 's/\./\t/2' |cut -f 1 |sort|uniq >GenesNotExpressed.list
+
+ wc GenesNotExpressed.list
+ 19278  19280 439092 GenesNotExpressed.list
+
+#How many genes are expressed and have less than 50% repeat overlap with the gene space?
+ cat AllGenes.list RepeatGenes.list GenesNotExpressed.list |sort|uniq -c |awk '$1==1 {print $2}'  >NonRepeatExpressedGenes.list
+wc NonRepeatExpressedGenes.list
+ 17431 17431 34862 NonRepeatExpressedGenes.list
+
+#How many of these 17,431 genes have a functional annotation?
+less 06_Combine/SCNgenomeFunctionalGeneAnnotations.gff3 |awk '$3=="mRNA"' |sed 's/;/\t/1' |sed 's/ID=//g' |cut -f 9- |sed 's/\./\t/2' |grep -w -f NonRepeatExpressedGenes.list  - |grep -c "Note"
+ 15968
+
+# Separate high confidence genes from others (repetitive and not expressed)
+less 06_Combine/SCNgenomeFunctionalGeneAnnotations.gff3 |awk '$3=="gene"' |sed 's/ID=//g' |sed 's/;/\t;/g' |grep -w -f NonRepeatExpressedGenes.list - |awk '{print $1,$2,$3,$4,$5,$6,$7,$8,"ID="$9$10$11}' |tr " " "\t" >SCNgenomeFunctionalGeneAnnotationsHighConfidenceGenesOnly.gff3 &
+
+awk '$3=="mRNA"' mikado.loci.gff3 |sed 's/ID=//g' |sed 's/;/\t;/1' |cut -f 9 |sed 's/\./\t\./2' >AllmRNA.mikado.loci.list
+
+
+
+
+
+less 06_Combine/SCNgenomeFunctionalGeneAnnotations.gff3  |sed 's/\.CDS/\t\.CDS/1' |sed 's
+/\.exon/\t\.exon/1' |sed 's/\.three/\t\.three/1' |sed 's/;/\t/1' |sed 's/\.five/\t\.five/1' |sed 's/ID=/ID=\t/1' >mikado.loci.Grepmod.gff3
+
+
+less NonRepeatExpressedmRNAs.list |while read line; do echo "awk '\$10==\""$line"\"' mikado.loci.Grepmod.gff3 >>SCNgenomeFunctionalGeneAnnotationsHighConfidenceRemainingFeatures.gff3" ;done >GetRemainingFeatures.sh
+ sh GetRemainingFeatures.sh &
+
+ less SCNgenomeFunctionalGeneAnnotationsHighConfidenceRemainingFeatures.gff3 |awk '{print $1,$2,$3,$4,$5,$6,$7,$8,$9$10$11";"$12$13}' |tr " " "\t" |cat - SCNgenomeFunctionalGeneAnnotationsHighConfidenceGenesOnly.gff3 |sort -k1,1V -k4,5n >SCNgenomeFuctionalGeneAnnotationsHighConfidenceAllGenesUnsorted.gff3
+
+perl gff3sort/gff3sort.pl --precise --chr_order natural SCNgenomeFuctionalGeneAnnotationsHighConfidenceAllGenesUnsorted.gff3 >SCNgenomeFunctionalGeneAnnotationsHighConfidenceAllFeatures.gff3
 
 
 ```

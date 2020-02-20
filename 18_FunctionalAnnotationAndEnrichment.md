@@ -66,7 +66,10 @@ awk '$3!="mRNA"' ../mikado.loci.gff3 |grep -v "#" |cat - AllGenesAnnotated.gff >
 #get the proper order for the gff, so it will show up in jbrowse
  perl gff3sort/gff3sort.pl --precise --chr_order natural AllTypesWWOAnnotationsDisorganized.gff > SCNgenomeFunctionalGeneAnnotations.gff3
 
+#How many genes were annotated?
 
+ less SCNgenomeFunctionalGeneAnnotations.gff3 |awk '$3=="mRNA"' |grep "Note" |sed 's/;/\t/1' |cut -f 9 |sed 's/\./\t/2' |cut -f 1 |sort|uniq|wc
+   14900   14900  384818
 
 
 ```
