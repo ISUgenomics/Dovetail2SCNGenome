@@ -700,8 +700,7 @@ awk '$3=="mRNA"' mikado.loci.gff3 |sed 's/ID=//g' |sed 's/;/\t;/1' |cut -f 9 |se
 
 
 
-less 06_Combine/SCNgenomeFunctionalGeneAnnotations.gff3  |sed 's/\.CDS/\t\.CDS/1' |sed 's
-/\.exon/\t\.exon/1' |sed 's/\.three/\t\.three/1' |sed 's/;/\t/1' |sed 's/\.five/\t\.five/1' |sed 's/ID=/ID=\t/1' >mikado.loci.Grepmod.gff3
+less 06_Combine/SCNgenomeFunctionalGeneAnnotations.gff3  |sed 's/\.CDS/\t\.CDS/1' |sed 's/\.exon/\t\.exon/1' |sed 's/\.three/\t\.three/1' |sed 's/;/\t/1' |sed 's/\.five/\t\.five/1' |sed 's/ID=/ID=\t/1' >mikado.loci.Grepmod.gff3
 
 
 less NonRepeatExpressedmRNAs.list |while read line; do echo "awk '\$10==\""$line"\"' mikado.loci.Grepmod.gff3 >>SCNgenomeFunctionalGeneAnnotationsHighConfidenceRemainingFeatures.gff3" ;done >GetRemainingFeatures.sh
