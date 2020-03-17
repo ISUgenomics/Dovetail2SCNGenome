@@ -712,3 +712,281 @@ perl gff3sort/gff3sort.pl --precise --chr_order natural SCNgenomeFuctionalGeneAn
 
 
 ```
+
+
+
+# Gene models were found to not have start codons about 50% of the time, Anju says the splicing is not right in some of the effectors.  
+
+Need to troublshoot.
+###  Copy data, create folders, install
+
+```
+#Move data from condo to nova,  
+from condo
+ /work/GIF/remkv6/Baum/04_Dovetail2Restart/23_Mikado/04_Round2Redo
+to nova
+ /work/gif/remkv6/Baum/04_DovetailSCNGenome/01_mikadoRerurn
+
+#had to delete all old mikado files for the rerun.
+
+
+
+
+
+
+
+
+#kept getting this error
+File "/home/remkv6/.conda/envs/mikado/lib/python3.6/site-packages/Mikado/serializers/blast_serializer/xml_serialiser.py", line 161, in run
+  for pickled in self._pickler(filename):
+File "/home/remkv6/.conda/envs/mikado/lib/python3.6/site-packages/Mikado/serializers/blast_serializer/xml_serialiser.py", line 105, in _pickler
+  max_target_seqs=self.__max_target_seqs)
+File "/home/remkv6/.conda/envs/mikado/lib/python3.6/site-packages/Mikado/serializers/blast_serializer/xml_serialiser.py", line 817, in objectify_record
+  current_target = _get_target_for_blast(self, alignment)
+File "/home/remkv6/.conda/envs/mikado/lib/python3.6/site-packages/Mikado/serializers/blast_serializer/xml_serialiser.py", line 780, in _get_target_for_blast
+  raise KeyError("{} not found in the targets!".format(alignment.accession))
+KeyError: '47529 not found in the targets!'
+
+#tried lots of attempts
+  checked correctness of list2.txt
+  47529 appears to be a blast target fom the Tylenchida EST sequences.  
+  serialize.log says some braker genes failed to be indexed
+  tried adding --trancripts mikado_prepared.fasta to the mikado file, but did not have an effect
+  redownloaded original augustus.hints.gtf from braker masked and converted to GFF3 via genometools gtf_2_gff3
+ml genometools
+gt gtf_to_gff3 -tidy -o augustus.hints.gff3 augustus.hints.gtf
+version 1.5.9
+  Checked the overlap between portcullis and the other transcript files.  It only seems to match up well with the braker predictions and the Round1mikado.loci.gff3.
+bedtools intersect -wo -a <(awk '$3=="CDS"' SCNgenome.DovetailSCNMaker4.all.maker.transcripts.gff3)  -b portcullis_filtered.pass.junctions.bed |cut -f 1,4,5,10,16,17 |less
+bedtools intersect -wo -a <(awk '$3=="CDS"' augustus.hints.gff3)  -b portcullis_filtered.pass.junctions.bed |cut -f 1,4,5,10,16,17 |less
+bedtools intersect -wo -a <(awk '$3=="CDS"' Round1mikado.loci.gff3)  -b portcullis_filtered.pass.junctions.bed |cut -f 1,4,5,10,16,17|less  
+```
+
+### Create Tylenchida EST database
+```
+sh runGmap.sh SCNgenome /work/gif/remkv6/Baum/04_DovetailSCNGenome/01_mikadoRerurn/ SCNgenome.fasta TylenchidaESTNotH.glycines.fasta
+
+#runGmap.sh
+###################################################################################
+#!/bin/bash
+
+#Makes a database and searches your sequences.
+#sh runGmap.sh <database name> <folder of database file ending with a "/"> <Fasta file> <query file>
+
+#examples
+#sh run_gmap.sh red_abalone_02Jun2017_5fUJu /work/GIF/remkv6/Serb/03_DavideGMAP/ red_abalone_02Jun2017_5fUJu.fasta DavideQuerydna.fasta
+#sh run_gmap.sh  m.yessoensisGenome /work/GIF/remkv6/Serb/03_DavideGMAP DavideQuerydna.fasta
+#sh run_gmap.sh Crassostreagigasgenome /work/GIF/remkv6/Serb/03_DavideGMAP Crassostreagigasgenome.fa DavideQuerydna.fasta
+
+
+#module load gsnap
+dbname=$1
+dbloc=$2
+dbfasta=$3
+query=$4
+gmap_build -d $dbname  -D $dbloc $dbfasta
+gmap -D $dbloc -d $dbname -B 5 -t 16  --input-buffer-size=1000000 --output-buffer-size=1000000 -f gff3_gene $query >${dbname%.*}.${query%.*}.gff3
+
+###################################################################################
+
+#How many EST's were there?
+grep -c ">"   TylenchidaESTNotH.glycines.fasta
+591134
+How many mapped?
+awk '$3=="gene"' SCNgenome.TylenchidaESTNotH.glycines.gff3 |wc
+  61094  549846 5384817
+
+#These are the counts from the related species gene preidctions I used in the tylenchida.  
+awk '$3=="gene"' SCNgenome.TylenchidaESTNotH.glycines.gff3 |cut -f 9 |sed 's/ID=//g' |sed 's/_/\t/1' |cut -f 1 |sort|uniq -c |sort -k1,1nr |less
+  8305 GPLIN
+  8248 GROS
+   372 MhA1
+   248 BXY
+   181 augustus
+   150 snap
+   134 Dd
+...
+#Another 43000 that were actual ESTs from NCBI's library
+awk '$3=="gene"' SCNgenome.TylenchidaESTNotH.glycines.gff3 |cut -f 9 |sed 's/ID=//g' |sed 's/_/\t/1' |cut -f 1 |sort|uniq -c |sort -k1,1nr |wc
+  43187
+```
+
+
+### Mikado script evolution
+
+Running this one step at a time to ensure I catch errors
+```
+
+#list3.txt
+#################################################################################
+SCNgenome.DovetailSCNMaker4.all.maker.transcripts.gff3  MA      True    -1
+Round1mikado.loci.gff3  MI      True
+SCNgenome.TylenchidaESTNotH.glycines.gff3       RE      False   -1
+augustus.hints.gff3     BR      True    1
+#################################################################################
+
+#MikadoScript_0.sub
+################################################################################
+#!/bin/bash
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=16
+#SBATCH -A its-hpc-condo-las-free
+#SBATCH -p freecompute
+#SBATCH -t 96:00:00
+#SBATCH -J MikadoScript_0
+#SBATCH -o MikadoScript_0.o%j
+#SBATCH -e MikadoScript_0.e%j
+#SBATCH --mail-user=remkv6@istate.edu
+#SBATCH --mail-type=begin
+#SBATCH --mail-type=end
+ulimit -s unlimited
+cd /work/gif/remkv6/Baum/04_DovetailSCNGenome/01_mikadoRerurn
+source activate mikado
+#!/bin/bash
+#setup variables
+genome=SCNgenome.fasta
+bam="AllRNASEQ_sorted.bam"
+list="list3.txt"
+#run splice junction prediction
+junctions="portcullis_filtered.pass.junctions.bed"
+#configure
+#mikado configure \
+#   --list $list \
+#   --reference $genome \
+#   --mode stringent \
+#   --scoring worm.yaml \
+#   --copy-scoring worm.yaml \
+#   --junctions $junctions configuration.yaml
+#prepare
+#mikado prepare \
+#   --json-conf configuration.yaml
+#blast db
+makeblastdb \
+   -in uniprotCombined.fasta \
+   -dbtype prot \
+   -parse_seqids
+#blast
+blastx \
+   -max_target_seqs 5 \
+   -num_threads 35 \
+   -query mikado_prepared.fasta \
+   -outfmt 5 \
+   -db uniprotCombined.fasta \
+   -evalue 0.000001 2> blast.log | sed '/^$/d' > mikado.blast.xml
+blastxml=mikado.blast.xml
+#transdecoder
+#TransDecoder.LongOrfs \
+#   -t mikado_prepared.fasta
+#TransDecoder.Predict \
+#   -t mikado_prepared.fasta \
+#   --cpu 16
+orfs=$(find $(pwd) -name "mikado_prepared.fasta.transdecoder.bed")
+#serialise
+#mikado serialise \
+#   --start-method spawn \
+#   --procs 16 \
+#   --blast_targets ${genome} \
+#   --json-conf configuration.yaml \
+#   --xml ${blastxml} \
+ #  --orfs ${orfs} \
+#   -mr .5
+
+#pick
+#mikado pick \
+#   --start-method spawn \
+#   --procs 16 \
+#   --json-conf configuration.yaml \
+#   --subloci_out mikado.subloci.gff3 \
+#   --pad
+scontrol show job $SLURM_JOB_ID
+```
+### Post analysis of latest mikado run with all but ab inito
+```
+less mikado.loci.gff3 |sort -k1,1V -k4,5nr |uniq |grep -v "#" |sed 's/transcript/mRNA/1'>UniquedRound2mikado.loci.gff3
+gt gff3 -sortlines -checkids -fixregionboundaries -tidy UniquedRound2mikado.loci.gff3 >tidiedUniquedRound2mikado.loci.gff3
+
+
+```
+
+
+### Since mikado fails to produce proteins with reliable splicing, start codons, and stop codons, filter all proteins that do not meet that criteria
+```
+#/work/gif/remkv6/Baum/04_DovetailSCNGenome/01_mikadoRerurn/03_MethionineProteinsOnly
+
+
+#braker genes, masked?
+less ../augustus.hints.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |wc
+ 24479   48958 10191962
+less ../augustus.hints.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |tr "\t" "\n" >Metaugustus.hints.proteins.fasta
+
+
+#maker genes on 368 scaffold genome
+less ../SCNgenome.DovetailSCNMaker4.all.maker.transcripts.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |wc
+  55950  111900 18316522
+  less ../SCNgenome.DovetailSCNMaker4.all.maker.transcripts.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |tr "\t" "\n" >MetSCNgenome.DovetailSCNMaker4.all.maker.transcripts.proteins.fasta
+
+#spades transcripts
+less ../SCNgenome.transcripts.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |wc
+42561   85122 10350491
+less ../SCNgenome.transcripts.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |tr "\t" "\n" >MetSpadesSCNgenome.transcripts.proteins.fasta
+
+#Trinity transcripts
+less ../SCNgenome.Trinity-GG.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |wc
+    72038  144076 14447267
+less ../SCNgenome.Trinity-GG.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |tr "\t" "\n" >MetSCNgenome.Trinity-GG.proteins.fasta
+
+# NCBI EST proteins
+less ../SCNgenome.TylenchidaESTNotH.glycines.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |wc
+  11857   23714 1639082
+#totally odd that so many did not have start codons
+grep -c ">" ../SCNgenome.TylenchidaESTNotH.glycines.proteins.fasta
+  60218
+less ../SCNgenome.TylenchidaESTNotH.glycines.proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |tr "\t" "\n" >MetSCNgenome.TylenchidaESTNotH.glycines.proteins.fasta
+
+# Class2 transcripts
+gt gtf_to_gff3 -tidy <(sort -k1,1V -k4,5nr AllRNASEQClass2.gtf|grep -v "#" |uniq) >AllRNASEQClass2.gff3
+gt gff3 -sortlines -tidy -fixregionboundaries  AllRNASEQClass2.gff3 >tidiedAllRNASEQClass2.gff3
+gt cds -startcodon -finalstopcodon -seqfile SCNgenome.fasta  -matchdesc tidiedAllRNASEQClass2.gff3 >FixedClass2.gff3
+gffread FixedClass2.gff3 -g SCNgenome.fasta -t mRNA -x AllRNASEQClass2._transcripts.fasta -y AllRNASEQClass2._proteins.fasta
+
+less ../AllRNASEQClass2._proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |wc
+  36212   72424 12980842
+less ../AllRNASEQClass2._proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |tr "\t" "\n" >MetAllRNASEQClass2._proteins.fast
+
+
+#stringtie conversion
+
+gt gtf_to_gff3 -tidy <(sort -k1,1V -k4,5nr NonRrnaRNASEQ_stringtie.gtf|grep -v "#" |uniq) >NonRrnaRNASEQ_stringtie.gff3
+gt gff3 -sortlines -tidy -fixregionboundaries  NonRrnaRNASEQ_stringtie.gff3 >tidiedNonRrnaRNASEQ_stringtie.gff3
+gt cds -startcodon -finalstopcodon -seqfile SCNgenome.fasta  -matchdesc tidiedNonRrnaRNASEQ_stringtie.gff3 >FixedNonRrnaRNASEQ_stringtie.gff3
+gffread FixedNonRrnaRNASEQ_stringtie.gff3 -g SCNgenome.fasta -t mRNA -x NonRrnaRNASEQ_stringtie_transcripts.fasta -y NonRrnaRNASEQ_stringtie_proteins.fasta
+
+
+less ../NonRrnaRNASEQ_stringtie_proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |wc
+  29063   58126 10216583
+
+less ../NonRrnaRNASEQ_stringtie_proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |tr "\t" "\n" >MetNonRrnaRNASEQ_stringtie_proteins.fasta
+
+
+#braker unmasked
+BrakerUnmasked.gff
+
+
+gt gtf_to_gff3 -tidy <(sort -k1,1V -k4,5nr BrakerUnmasked.gff|grep -v "#" |uniq) >BrakerUnmasked.gff3
+gt gff3 -sortlines -tidy -fixregionboundaries  BrakerUnmasked.gff3 >tidiedBrakerUnmasked.gff3
+gt cds -startcodon -finalstopcodon -seqfile SCNgenome.fasta  -matchdesc tidiedBrakerUnmasked.gff3 >FixedBrakerUnmasked.gff3
+gffread FixedBrakerUnmasked.gff3 -g SCNgenome.fasta -t mRNA -x BrakerUnmasked_transcripts.fasta -y BrakerUnmasked_proteins.fasta
+
+
+less ../BrakerUnmasked_proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |wc
+37894   75788 15010594
+
+less ../BrakerUnmasked_proteins.fasta |awk '{print $1}' |tr "\n" "\t" |sed 's/>/\n>/g'  |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |awk 'substr($2,1,1)=="M"'  |tr "\t" "\n" >MetBrakerUnmasked_proteins.fasta
+
+
+
+
+for f in *fasta; do echo "mkdir "$f"dir; cd "$f"dir; ln -s ../SCNgenome.fasta; ln -s ../"$f" ; ml miniconda3; source activate ge
+nomethreader;gth -genomic SCNgenome.fasta -protein "$f" -gff3out -species nematode -skipalignmentout -o "${f%.*}"aln -force";done  >gth.sh
+
+```

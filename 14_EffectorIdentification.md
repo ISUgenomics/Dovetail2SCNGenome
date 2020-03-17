@@ -29,6 +29,11 @@ gmap -D $dbloc -d $dbname -B 5 -t 16  --min-trimmed-coverage=0.5 --input-buffer-
 #how many alignment of 50% query coverage did I get?
 awk '$3=="gene"' SCNgenome.effector.gff3 |wc
    126    1134   18667
+#How many of these are unique
+awk '$3=="gene"' Sortedeffectors.gmapped.gff3 |awk '{print $1,$4,$5}' |tr " " "\t" |sort -k1,1V -k2
+,3n |bedtools merge -i - |wc
+    100     300    2546
+
 
 
 less SCNgenome.effector.gff3 |awk '$3=="CDS"' |bedtools intersect -wo -b - -a ../25_AnnotateGenes/mikado.loci.gff3  |sed 's/ID=//g' |sed 's/;/\t/g' |awk '$3=="mRNA"' |cut -f 9 |sed 's/\./\t/2' |cut -f 1 |sort|uniq|wc
@@ -39,6 +44,12 @@ less SCNgenome.effector.gff3 |awk '$3=="CDS"' |bedtools intersect -wo -b - -a ..
 #How many of these are secreted?
 cat SecretedGenes.list ../29_Effectors/GmappedEffectorsGene.list |sort|uniq -c |awk '$1=="2" ' |wc
      54     108    1665
+
+
+#How many in the old genome?
+awk '$3=="gene"' Sortedeffectors.gmapped.gff3 |awk '{print $1,$4,$5}' |tr " " "\t" |sort -k1,1V -k2
+,3n |bedtools merge -i - |wc
+    100     300    2546
 
 ```
 
@@ -69,7 +80,7 @@ cat SecretedGenes.list ../29_Effectors/01_Diamond/diamondEffectorGenes.list |sor
 ```
 
 
-### Identify secreted proteins
+### Identify secreted proteins -- Signalp 4.1
 ```
 #/work/GIF/remkv6/Baum/04_Dovetail2Restart/32_SignalP
 ml dafoam/1.0
@@ -83,4 +94,20 @@ less mikado_proteinsFixed.fasta.out |grep "SP='YES'"|grep "SignalP-noTM" |cut -f
 
 less mikado_proteinsFixed.fasta.out |grep "SP='YES'"|grep "SignalP-noTM" |cut -f 1 |sed 's/\./\t/2' |sed 's/Name=//g' |cut -f 1 |sort|uniq >SecretedGenes.list
 
+```
+
+### Identify secreted proteins -- SignalP 5.0
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/32_SignalP/02_SignalP5/signalp-5.0b/bin
+#downloaded and installed signalp 5.0
+./signalp -fasta formatted_mikado_proteinsFixed.fasta -gff3
+
+less formatted_mikado_proteinsFixed_summary.signalp5 |awk '$2!="OTHER"' |awk '{print $1}' |grep "\.1" |sort|uniq|wc
+   3073    3073   76158
+less formatted_mikado_proteinsFixed_summary.signalp5 |awk '$2!="OTHER"' |awk '{print $1}' |grep "\.1" |sort|uniq |sed 's/\./\t/2' |cut -f 1 |sort|uniq >SignalP5SecretedGene.list
+
+```
+### Identify secreted proteins -- SignalP 3.0
+```
+#hmm.  crashed, not sure why
 ```

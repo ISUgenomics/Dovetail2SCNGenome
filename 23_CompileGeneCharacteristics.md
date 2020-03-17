@@ -11,6 +11,7 @@ less ../39_DifferentialExpression/ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<16 && NR
 less ../39_DifferentialExpression/ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<7461 && NR>1 && $3>0{print $1}' >ppPA3vspPA3ICListUp.tab
 less ../39_DifferentialExpression/pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<7284 && NR>1 && $3>0{print $1}' >pPA3CvspPA3ICListUp.tab
 less ../39_DifferentialExpression/2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<13 && NR>1 && $3>0{print $1}' >2PA3vs3MM10GlandListUp.tab
+less ../39_DifferentialExpression/2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<51 && NR>1 && $3>0{print $1}' >2PA3vs2MM10GlandListUp.tab
 
 less ../39_DifferentialExpression/AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<5281 && NR>1 && $3<0{print $1}' >AllGlandvsAllWholeWormListDown.tab
 less ../39_DifferentialExpression/PA3GlandvsMM10Gland |sed 's/,/\t/g' |awk 'NR<6 && NR>1 && $3<0{print $1}' >PA3GlandvsMM10GlandListDown.tab
@@ -19,6 +20,12 @@ less ../39_DifferentialExpression/ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<16 && NR
 less ../39_DifferentialExpression/ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<7461 && NR>1 && $3<0{print $1}' >ppPA3vspPA3ICListDown.tab
 less ../39_DifferentialExpression/pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<7284 && NR>1 && $3<0{print $1}' >pPA3CvspPA3ICListDown.tab
 less ../39_DifferentialExpression/2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<13 && NR>1 && $3<0{print $1}' >2PA3vs3MM10GlandListDown.tab
+less ../39_DifferentialExpression/2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<51 && NR>1 && $3<0{print $1}' >2PA3vs2MM10GlandListDown.tab
+
+
+
+
+
 ln -s ../29_Effectors/GmappedEffectorsGene.list
 ln -s ../25_AnnotateGenes/mikado.loci.gff3
 awk '$3=="gene"' mikado.loci.gff3 |awk '{print $9,$1":"$4"-"$5}' |tr " " "\t" >GeneLocationsList.tab
