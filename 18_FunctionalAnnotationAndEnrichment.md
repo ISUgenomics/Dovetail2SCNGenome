@@ -46,7 +46,7 @@ less  ../01_Interpro/interproAnnot.gff3 |awk 'NR<234320 && $3!="polypeptide"' |c
 ```
 
 #get all the blasts together
-awk '{arr[$1]=arr[$1] ";" $2}END{for(i in arr)print i,arr[i]}' *tab |sed 's/ ;/\tNote=/1'   >CombineAnnot.tab1
+awk -F"\t" '{arr[$1]=arr[$1] ";" $2}END{for(i in arr)print i,arr[i]}' *tab |sed 's/ ;/\tNote=/1'   >CombineAnnot.tab1
 
 #add in the interpro annotations
 awk '{arr[$1]=arr[$1] ";" $2}END{for(i in arr)print i,arr[i]}' *tab1 |sed 's/ ;/\t/1' >CombeinAnnotIPRs.tab2
