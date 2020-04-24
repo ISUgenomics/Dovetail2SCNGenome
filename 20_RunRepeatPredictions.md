@@ -67,3 +67,42 @@ less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"
 
 
 ```
+
+
+## Make a tabular file of repetitive mRNA's for feature table
+
+### EDTA tab file
+```
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/33_EDTA/EDTA
+
+
+#30% coverage of a mrna by a repeat
+bedtools intersect -wo -f .3 -b SCNgenome.fasta.EDTA.intact.gff -a ../../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 >EDTA.tab
+
+#30% coverage of a mrna by a repeat
+bedtools intersect -wo -f .3 -b SCNgenome.fasta.EDTA.intact.gff -a ../../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
+   1620    3240  225214
+
+#Any overlap with an EDTA repeat
+bedtools intersect -wo  -b SCNgenome.fasta.EDTA.intact.gff -a ../../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
+      3594    7188  492809
+
+```
+
+### Repeatmodeler tab file
+```
+#30% coverage of an mRNA
+bedtools intersect -f .3 -wo  -b SCNgenome.fasta.out.gff -a ../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |awk '{print $1"\t"$3}' |sed 's/"//g' >RepeatModeler.tab
+
+#30% coverage of an mRNA by a repeat
+[remkv6@condo042 10_RepeatModeler]$ bedtools intersect -f .3 -wo  -b SCNgenome.fasta.out.gff -a ../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18
+|sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
+   8488   42440  430327
+
+#Any overlap with a repeatmodeler repeat   
+bedtools intersect -wo  -b SCNgenome.fasta.out.gff -a ../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed '
+s/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
+  25575  127875 1288617
+
+
+```

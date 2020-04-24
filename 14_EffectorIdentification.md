@@ -29,85 +29,29 @@ gmap -D $dbloc -d $dbname -B 5 -t 16  --min-trimmed-coverage=0.5 --input-buffer-
 #how many alignment of 50% query coverage did I get?
 awk '$3=="gene"' SCNgenome.effector.gff3 |wc
    126    1134   18667
-#How many of these are unique
-awk '$3=="gene"' Sortedeffectors.gmapped.gff3 |awk '{print $1,$4,$5}' |tr " " "\t" |sort -k1,1V -k2
-,3n |bedtools merge -i - |wc
-    100     300    2546
 
-
-
-less SCNgenome.effector.gff3 |awk '$3=="CDS"' |bedtools intersect -wo -b - -a ../25_AnnotateGenes/mikado.loci.gff3  |sed 's/ID=//g' |sed 's/;/\t/g' |awk '$3=="mRNA"' |cut -f 9 |sed 's/\./\t/2' |cut -f 1 |sort|uniq|wc
-    132     132    3008
-
-less SCNgenome.effector.gff3 |awk '$3=="CDS"' |bedtools intersect -wo -b - -a ../25_AnnotateGenes/mikado.loci.gff3  |sed 's/ID=//g' |sed 's/;/\t/g' |awk '$3=="mRNA"' |cut -f 9 |sed 's/\./\t/2' |cut -f 1 |sort|uniq >GmappedEffectorsGene.list
-
-#How many of these are secreted?
-cat SecretedGenes.list ../29_Effectors/GmappedEffectorsGene.list |sort|uniq -c |awk '$1=="2" ' |wc
-     54     108    1665
-
+#prep tab file of gene"\t"effector
+less SCNgenome.effector.gff3 |awk '$3=="CDS"' |bedtools intersect -wo -b - -a OrderedSCNGenePredictions.gff3  |sed 's/ID=//g' |sed 's/;/\t/g' |awk '$3=="mRNA"' |cut -f 9,23 |sed 's/Target=//g' |sed 's/Name=//g' |sed 's/Parent=//g' |awk '{print $1"\t"$2}' |sort -k1,1 -u |sed 's/lcl|//g' >GmapEffectorsGenes.tab
+wc GmapEffectorsGenes.tab # these are mRNAs
+ 156  312 7331 GmapEffectorsGenes.tab
 
 #How many in the old genome?
-awk '$3=="gene"' Sortedeffectors.gmapped.gff3 |awk '{print $1,$4,$5}' |tr " " "\t" |sort -k1,1V -k2
-,3n |bedtools merge -i - |wc
+awk '$3=="gene"' Sortedeffectors.gmapped.gff3 |awk '{print $1,$4,$5}' |tr " " "\t" |sort -k1,1V -k2,3n |bedtools merge -i - |wc
     100     300    2546
-
 ```
 
 
 ### use diamond to find conserved effector proteins
 ```
-
-
 ml diamond/0.9.23-xqnzcyt
+diamond makedb --in OrderedSCNGenePredictionsVHEJ_proteins.fasta -d OrderedSCNGenePredictionsVHEJ_proteins
 
 #blastx with 50% min query cover and 50% min identity
-diamond blastx --query effector.fa  -d mikado_proteinsFixed --in mikado_proteinsFixed.fasta --strand both --query-cover .5
-  --id 0.5 >diamond.out
+diamond blastx --query effector.fa  -d OrderedSCNGenePredictionsVHEJ_proteins --in OrderedSCNGenePredictionsVHEJ_proteins.fasta --strand both --query-cover .5 --id 0.5 >diamond.out
 
-# how many primary isoforms meet the above criteria?
-less diamond.out |awk 'substr($2,length($2),2)=="1" {print $2}' |sort|uniq |wc
-    386     386    9580
+# how many mRNA's meet the above criteria?
+awk '{print $2}' diamond.out |sort|uniq|wc
+    431     431    4178
 
-less diamond.out |cut -f 2 |sed 's/\./\t/2' |cut -f 1 |sort|uniq|wc
-    386     386    8808
-
-less diamond.out |awk 'substr($2,length($2),2)=="1" {print $2}' |sort|uniq |sed 's/\./\t/2' |cut -f 1 >diamondEffectorGenes.list
-
-#How many of these are secrted?
-cat SecretedGenes.list ../29_Effectors/01_Diamond/diamondEffectorGenes.list |sort|uniq -c |awk '$1=="2" ' |wc
-    141     282    4352
-
-```
-
-
-### Identify secreted proteins -- Signalp 4.1
-```
-#/work/GIF/remkv6/Baum/04_Dovetail2Restart/32_SignalP
-ml dafoam/1.0
-ml signalp/4.1
-
-signalp -f summary mikado_proteinsFixed.fasta >mikado_proteinsFixed.fasta.out
-
-#how many secreted without transmembrane domains
-less mikado_proteinsFixed.fasta.out |grep "SP='YES'"|grep "SignalP-noTM" |cut -f 1 |sed 's/\./\t/2' |sed 's/Name=//g' |cut -f 1 |sort|uniq |wc
-   3152    3152   71830
-
-less mikado_proteinsFixed.fasta.out |grep "SP='YES'"|grep "SignalP-noTM" |cut -f 1 |sed 's/\./\t/2' |sed 's/Name=//g' |cut -f 1 |sort|uniq >SecretedGenes.list
-
-```
-
-### Identify secreted proteins -- SignalP 5.0
-```
-#/work/GIF/remkv6/Baum/04_Dovetail2Restart/32_SignalP/02_SignalP5/signalp-5.0b/bin
-#downloaded and installed signalp 5.0
-./signalp -fasta formatted_mikado_proteinsFixed.fasta -gff3
-
-less formatted_mikado_proteinsFixed_summary.signalp5 |awk '$2!="OTHER"' |awk '{print $1}' |grep "\.1" |sort|uniq|wc
-   3073    3073   76158
-less formatted_mikado_proteinsFixed_summary.signalp5 |awk '$2!="OTHER"' |awk '{print $1}' |grep "\.1" |sort|uniq |sed 's/\./\t/2' |cut -f 1 |sort|uniq >SignalP5SecretedGene.list
-
-```
-### Identify secreted proteins -- SignalP 3.0
-```
-#hmm.  crashed, not sure why
+awk '{print $2"\t"$1}' diamond.out |sort -u  -k1,1 >NamedDiamondEffectors.tab
 ```

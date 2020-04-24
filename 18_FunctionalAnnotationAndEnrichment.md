@@ -1,46 +1,31 @@
-
-
-
-
 ## Compile all annotations for gff
 
 
 ### NR Blast compilation
 ```
 #/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/06_Combine
-cat ../02_Prots2Nr/*blastp.out |sort -k1,1V -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tNRBlastp:/g' >NRBlastp.tab
-
+cat ../02_Prots2Nr/SuperSplitter/*blastp.out |sort -k1,1V -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tNRBlastp:/g' >NRBlastp.tab
 ```
-
 ### NT Blastn annotation
 ```
 #/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/06_Combine
-
-
-less ../03_Transcrips2Nt/mikado_transcripts.vs.nt.cul5.1e5.blastn.out |sort -k1,1V -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tNTBlastn:/g' >NTBlastn.tab
-
+cat ../03_Transcrips2Nt/OrderedSCNGenePredictions_VHEJtranscripts.part*blastn.out |sort -k1,1V -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tNTBlastn:/g' >NTBlastn.tab
 ```
-
 ### Uniprot Blastp
 ```
-sort -u -k1,1V mikado_proteinsFixed.vs.uniprot_sprot.cul5.1e5.blastp.out |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tUPBlastp:/g'> ../06_Combine/UPBlastp.tab
-
-
-
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/06_Combine
+cat ../04_ProtsUniprot/OrderedSCNGenePredictionsVHEJ_proteins.part*out |sort -u -k1,1V |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tUPBlastp:/g'> UPBlastp.tab
 ```
-
 ### Uniprot Blastx
 ```
-sort -k1,1 -u mikado_transcripts.vs.uniprot_sprot.cul5.1e5.blastx.out |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tUPBlastx:/g' ../06_Combine/UPBlastx.tab
-
-
-
-
+cat ../05_TransUniprot/Ordered*blastx.out |sort -k1,1 -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tUPBlastx:/g' >UPBlastx.tab
 ```
 
 ### Interproscan annotation
 ```
-less  ../01_Interpro/interproAnnot.gff3 |awk 'NR<234320 && $3!="polypeptide"' |cut -f 1,2,9- |sed 's/;/\t/3' |cut -f 1,2,4 |awk 'substr($1,1,1)!="#"' |sed 's/\t/:/2' |uniq |awk '{arr[$1]=arr[$1] "\t" $2}END{for(i in arr)print i,arr[i]}' |sed 's/\t/#/1' |sed 's/\t/;/g' |sed 's/#/\t/1' |sed 's/\t/\tIPR:/1'  >interproAnnot.tab1
+#had to rerun this on the new annotation 4/9/20
+
+less  ../01_Interpro/interproAnnot_1.gff3 |awk 'NR<282848 && $3!="polypeptide"' |cut -f 1,2,9- |sed 's/;/\t/3' |cut -f 1,2,4 |awk 'substr($1,1,1)!="#"' |sed 's/\t/:/2' |uniq |awk '{arr[$1]=arr[$1] "\t" $2}END{for(i in arr)print i,arr[i]}' |sed 's/\t/#/1' |sed 's/\t/;/g' |sed 's/#/\t/1' |sed 's/\t/\tIPR:/1'  >interproAnnot.tab1    
 ```
 ### Combine all annotations
 ```
