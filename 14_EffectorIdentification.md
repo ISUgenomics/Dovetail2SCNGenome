@@ -54,4 +54,23 @@ awk '{print $2}' diamond.out |sort|uniq|wc
     431     431    4178
 
 awk '{print $2"\t"$1}' diamond.out |sort -u  -k1,1 >NamedDiamondEffectors.tab
+
+
+
+
+#get all mrna, cds, exons for diamond effectors
+awk '{print $1}' NamedDiamondEffectors.tab|while read line; do  grep -w  $line SortedOrderedSCNGenePredictions.gff3 >>DiamondEffectors.gffmod;done &
+#grab genes
+less DiamondEffectorsGene.gffmod |awk '$3=="gene"' |paste - NamedDiamondEffectors.tab |cut -f 1-10,12 |awk '{print $1,$2,$3,$4,$5,$6,$7,$8,$9$10";Note="$11}' |tr " " "\t" >DiamondEffectorsGene.gff
+#concat genes & all mrna, cds, exons for diamond effectors
+cat DiamondEffectorsGene.gff DiamondEffectors.gffmod |sed 's/ID=\t/ID=/g' |sed 's/Parent=\t/Parent=/g' >UnsortedDiamondEffectors.gff
+
+
+perl gff3sort/gff3sort.pl --precise --chr_order natural TidyUnsortedDiamondEffectors.gff >SortedTidyUnsortedDiamondEffectors.gff
+sh ~/common_scripts/runTabix.sh SortedTidyUnsortedDiamondEffectors.gff
+
+
+less SortedTidyUnsortedDiamondEffectors.gff |awk '$3=="gene"' |wc
+    402    3618   42698
+
 ```

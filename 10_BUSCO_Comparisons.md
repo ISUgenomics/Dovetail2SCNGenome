@@ -128,8 +128,8 @@ C:64.6%[S:59.9%,D:4.7%],F:8.8%,M:26.6%,n:982
 982 Total BUSCO groups searched
 ```
 
- ### Run busco on annotated proteins
- ```
+### Run busco on annotated proteins
+```
  #/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/06_BuscoPseudomoleculeProteins
 
  ml cdbfasta
@@ -148,7 +148,14 @@ less mikado_proteinsFixed.fasta |grep ".1" |awk '{print $1}' |sed 's/>//g'|cdbya
  INFO    220 Missing BUSCOs (M)
  INFO    982 Total BUSCO groups searched
 
- ```
+### REDO with updated annotation 5-13-2020
+ln -s /work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictionsVHEJ_proteins.fasta
+ml miniconda2; source activate busco; export AUGUSTUS_CONFIG_PATH=/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config;  run_BUSCO.py -i OrderedSCNGenePredictionsVHEJ_proteins.fasta -l /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison//04_590D2/busco-3.0.1-ze7lkiedvzma2wiiehfdwa7usmcgk5wi/nematoda_odb9 -o PseudoBUSCOFixedAnnotations -m prot -c 15 -s Hglycines2 -f
+
+
+```
+
+```
 ### Check buscos via blast to see how many are missing
 ```
  ln -s  /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison//04_590D2/busco-3.0.1-ze7lkiedvzma2wiiehfdwa7usmcgk5wi/nematoda_odb9/ancestral

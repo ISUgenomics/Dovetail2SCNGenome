@@ -33,16 +33,20 @@ grep -c ">" Trinity-GG.fasta
 110683
 
 #map trinity transcripts back to genome
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/12_Trinity/trinity_out_dir
+
 sh runGmap.sh SCNgenome /work/GIF/remkv6/Baum/04_Dovetail2Restart/12_Trinity/trinity_out_dir/ ../SCNgenome.fasta Trinity-GG.fasta
 
 How many gene entries did we get in the gff?
-less SCNgenome.Trinity-GG.gff3 |awk '$3=="gene"' |wc
- 188834 1699506 21760750
+less SCNgenome.Trinity-GG.gff3 |awk '$3=="gene"' |grep "path1"|wc
+110013  990117 12716727
 ```
 
 
 ### set up braker on unmasked genome
 ```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/13_braker
+
 #note this was ran with all rRNA included
 ln -s ../11_AlignRNA/AllRNASEQ_sorted.bam
 ln -s ../11_AlignRNA/SCNgenome.fasta
@@ -56,6 +60,10 @@ braker.pl --species=Hglycines2 --genome=SCNgenome.fasta --bam=SCNgenome.consensu
 #how many genes?
 grep -v "#" augustus.hints.gff |awk '$3=="gene"' |wc
   35514  319626 2025377
+
+#how many transcripts?
+awk '$3=="transcript"' augustus.hints.gff |grep -v "#" |wc
+ 37897  341073 2502318
 
 ```
 
@@ -117,6 +125,10 @@ braker.pl --species=Hglycines3 --genome=SCNgenome.fasta.masked --bam=SCNgenome.c
 awk '$3=="gene"' augustus.hints.gff |grep -v "#" |wc
   22408  201672 1272920
 
+#how many transcripts
+awk '$3=="transcript"' augustus.hints.gff |grep -v "#" |wc
+  24481  220329 1610884
+
 #translate the gff to fasta for use with spades below
 ~/common_scripts/gff2fasta.pl ../../../10_RepeatModeler/SCNgenome.fasta augustus.hints.gff 4SPADES
 ```
@@ -153,6 +165,10 @@ grep -c ">" transcripts.fasta
 100402
 
 #need to align these so they are available as a gff for mikado
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/22_spadesTranscripts/SpadesAssemblyFat/01_GmapAlign
 
+sh runGmap.sh SCNgenome /work/GIF/remkv6/Baum/04_Dovetail2Restart/22_spadesTranscripts/SpadesAssemblyFat/01_GmapAlign/ SCNgenome.fasta transcripts.fasta
 
+less SCNgenome.transcripts.gff3 |awk '$3=="gene"' |grep "path1"|wc
+  70737  636633 10925032
 ```

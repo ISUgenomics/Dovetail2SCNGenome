@@ -10,6 +10,15 @@ ml trf
 trf ../SCNgenome.fasta 2 7 7 80 10 50 500 -h -d -ngs >trf.out  &
 
 less -S 01_TRF/trf.out |awk -v x=0 '{if (substr($1,1,1)=="@") {x=$1} else {print x,$1,$2}}' |sort|uniq|tr " " "\t" |sed 's/@//g'   >TRF.bed
+
+less TRF.bed |awk '{print $3-$2}' |summary.sh
+Total:  16,390,271
+Count:  87,791
+Mean:   186
+Median: 69
+Min:    24
+Max:    46,311
+
 ```
 
 ### EDTA repeat prediction

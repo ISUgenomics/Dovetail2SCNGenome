@@ -187,3 +187,20 @@ awk '$3=="gene"' SCNgenome.TylenchidaESTNotH.glycines.gff3 |cut -f 9 |sed 's/ID=
 awk '$3=="gene"' SCNgenome.TylenchidaESTNotH.glycines.gff3 |cut -f 9 |sed 's/ID=//g' |sed 's/_/\t/1' |cut -f 1 |sort|uniq -c |sort -k1,1nr |wc
   43187
 ```
+### Gmap alignments of previous 368 scaffold assembly's, Maker annotation's transcripts
+
+```
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/24_MapDove1MakerGenes
+
+ln -s ../../01_SCNDovetailScaffolding/09_Maker/01_maker/DovetailSCNMaker4.all.maker.transcripts.fasta
+ln -s ../10_RepeatModeler/SCNgenome.fasta
+
+sh runGmap.sh SCNgenome /work/GIF/remkv6/Baum/04_Dovetail2Restart/24_MapDove1MakerGenes/ SCNgenome.fasta DovetailSCNMaker4.all.maker.transcripts.fasta
+
+
+awk '$3=="mRNA"' SCNgenome.DovetailSCNMaker4.all.maker.transcripts.gff3 |grep -v "#" |wc
+ 78024  702216 15488896
+
+
+
+```
