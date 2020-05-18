@@ -160,9 +160,67 @@ INFO    116 Fragmented BUSCOs (F)
 INFO    393 Missing BUSCOs (M)
 INFO    982 Total BUSCO groups searched
 
+### Redo with all transcripts reduced and clustered with cufflinks
+INFO    C:67.4%[S:16.6%,D:50.8%],F:8.7%,M:23.9%,n:982
+INFO    662 Complete BUSCOs (C)
+INFO    163 Complete and single-copy BUSCOs (S)
+INFO    499 Complete and duplicated BUSCOs (D)
+INFO    85 Fragmented BUSCOs (F)
+INFO    235 Missing BUSCOs (M)
+INFO    982 Total BUSCO groups searched
 
+### add ancestral busco proteins with genomethreader alignments to above
+INFO    C:67.4%[S:16.6%,D:50.8%],F:8.7%,M:23.9%,n:982
+INFO    662 Complete BUSCOs (C)
+INFO    163 Complete and single-copy BUSCOs (S)
+INFO    499 Complete and duplicated BUSCOs (D)
+INFO    85 Fragmented BUSCOs (F)
+INFO    235 Missing BUSCOs (M)
+INFO    982 Total BUSCO groups searched
+
+### add X12 gene models to cufflinks clustering of above
+#clustering done on nova, buscos done on condo
+
+gffread -Z  -K -M -Q -VHEJ -g ../SCNgenome.fasta  ../AllRNASEQClass2.gtf ../NonRrnaRNASEQ_stringtie.gtf  ../SCNgenome.Trinity-GG.gff3 ../SCNgenome.DovetailSCNMaker4.all.maker.transcripts.gff3 ../brakermasked.gff ../tidiedBrakerUnmasked.gff3 ../mikado.loci.gff3 ../SCNgenome.transcripts.gff3  SCNgenome.H.glycinesEST.gff3 ancestral.aln ../01_BrakerFix/mikado.loci.gff3 SCNgenome.X12.transcripts.gff3 -o AllProtsMetESTMergeOrderedSCNGenePredictions.gff3  -x  MergingTestSCNVHEJ_transcripts.fasta -y  MergingTestSCNVHEJ_proteins.fasta
+
+INFO    C:68.2%[S:16.1%,D:52.1%],F:8.8%,M:23.0%,n:982
+INFO    670 Complete BUSCOs (C)
+INFO    158 Complete and single-copy BUSCOs (S)
+INFO    512 Complete and duplicated BUSCOs (D)
+INFO    86 Fragmented BUSCOs (F)
+INFO    226 Missing BUSCOs (M)
+INFO    982 Total BUSCO groups searched
+
+Ran everything (all transcripts, transcript/gene alignments, x12 transcripts alignments) back through braker only using gff's.  Got the best busco score I've seen for the scn genome
+
+INFO    C:69.4%[S:26.1%,D:43.3%],F:9.3%,M:21.3%,n:982
+INFO    681 Complete BUSCOs (C)
+INFO    256 Complete and single-copy BUSCOs (S)
+INFO    425 Complete and duplicated BUSCOs (D)
+INFO    91 Fragmented BUSCOs (F)
+INFO    210 Missing BUSCOs (M)
+INFO    982 Total BUSCO groups searched
 
 ```
+### combine buscos found in genome mode with those found in protein mode
+```
+#
+cat ../../05_pseudomolecule/run_PseudoBUSCO/full_table_PseudoBUSCO.tsv full_table_PseudoBUSCOCufflinksMergingTest.tsv ../run_PseudoBUSCO/full_table_PseudoBUSCO.tsv ../run_PseudoBUSCOFixedAnnotations/full_table_PseudoBUSCOFixedAnnotations.tsv|grep -v "#" |awk '$2!="Missing"' |sort -k2,2 |sort -k1,1 -k2,2V|less
+
+cat run*/*tsv ../05_pseudomolecule/run_PseudoBUSCO/full_table_PseudoBUSCO.tsv |grep -v "#" |awk '$2!="Missing"' |sort -k2,2 |awk 'NF>1'|sort -k1,1 -k2,2V|sort -u -k1,1 |wc
+    823    4203   40584
+
+cat run_PseudoBUSCOCufflinksMergingTest ../05_pseudomolecule/run_PseudoBUSCO/full_table_PseudoBUSCO.tsv |grep -v "#" |awk '$2!="Missing"' |sort -k2,2 |awk 'NF>1'|sort -k1,1 -k2,2V|sort -u -k1,1 |wc
+
+```
+
+
+
+
+
+
+
+
 ### Check buscos via blast to see how many are missing
 ```
  ln -s  /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison//04_590D2/busco-3.0.1-ze7lkiedvzma2wiiehfdwa7usmcgk5wi/nematoda_odb9/ancestral
