@@ -23,6 +23,10 @@ cat ../05_TransUniprot/Ordered*blastx.out |sort -k1,1 -u |cut -f 4,5,17 |sed 's/
 
 ### Interproscan annotation
 ```
+
+
+
+
 #had to rerun this on the new annotation 4/9/20
 
 less  ../01_Interpro/interproAnnot_1.gff3 |awk 'NR<282848 && $3!="polypeptide"' |cut -f 1,2,9- |sed 's/;/\t/3' |cut -f 1,2,4 |awk 'substr($1,1,1)!="#"' |sed 's/\t/:/2' |uniq |awk '{arr[$1]=arr[$1] "\t" $2}END{for(i in arr)print i,arr[i]}' |sed 's/\t/#/1' |sed 's/\t/;/g' |sed 's/#/\t/1' |sed 's/\t/\tIPR:/1'  >interproAnnot.tab1    

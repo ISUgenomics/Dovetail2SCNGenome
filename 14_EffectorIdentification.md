@@ -3,6 +3,7 @@
 
 ### Gmap the known effectors
 ```
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/29_Effectors
 
 #runGmap.sh at 50% min query coverage
 ##########################################################
@@ -31,9 +32,10 @@ awk '$3=="gene"' SCNgenome.effector.gff3 |wc
    126    1134   18667
 
 #prep tab file of gene"\t"effector
-less SCNgenome.effector.gff3 |awk '$3=="CDS"' |bedtools intersect -wo -b - -a OrderedSCNGenePredictions.gff3  |sed 's/ID=//g' |sed 's/;/\t/g' |awk '$3=="mRNA"' |cut -f 9,23 |sed 's/Target=//g' |sed 's/Name=//g' |sed 's/Parent=//g' |awk '{print $1"\t"$2}' |sort -k1,1 -u |sed 's/lcl|//g' >GmapEffectorsGenes.tab
+less SCNgenome.effector.gff3 |awk '$3=="CDS"' |bedtools intersect -wo -b - -a mikado.loci.ancestral.gff3  |sed 's/ID=//g' |sed 's/;/\t/g' |awk '$3=="mRNA"' |cut -f 9,23 |sed 's/Target=//g' |sed 's/Name=//g' |sed 's/Parent=//g' |awk '{print $1"\t"$2}' |sort -k1,1 -u |sed 's/lcl|//g' >GmapEffectorsGenes.tab
 wc GmapEffectorsGenes.tab # these are mRNAs
- 156  312 7331 GmapEffectorsGenes.tab
+125  250 8249 GmapEffectorsGenes.tab
+
 
 #How many in the old genome?
 awk '$3=="gene"' Sortedeffectors.gmapped.gff3 |awk '{print $1,$4,$5}' |tr " " "\t" |sort -k1,1V -k2,3n |bedtools merge -i - |wc
@@ -44,26 +46,28 @@ awk '$3=="gene"' Sortedeffectors.gmapped.gff3 |awk '{print $1,$4,$5}' |tr " " "\
 ### use diamond to find conserved effector proteins
 ```
 ml diamond/0.9.23-xqnzcyt
-diamond makedb --in OrderedSCNGenePredictionsVHEJ_proteins.fasta -d OrderedSCNGenePredictionsVHEJ_proteins
+diamond makedb --in mikado.loci.ancestralVHEJ_proteins.fasta -d mikado.loci.ancestralVHEJ_proteins
 
 #blastx with 50% min query cover and 50% min identity
-diamond blastx --query effector.fa  -d OrderedSCNGenePredictionsVHEJ_proteins --in OrderedSCNGenePredictionsVHEJ_proteins.fasta --strand both --query-cover .5 --id 0.5 >diamond.out
+diamond blastx --query effector.fa  -d mikado.loci.ancestralVHEJ_proteins --in mikado.loci.ancestralVHEJ_proteins.fasta --strand both --query-cover .5 --id 0.5 >diamond.out
 
 # how many mRNA's meet the above criteria?
 awk '{print $2}' diamond.out |sort|uniq|wc
-    431     431    4178
+362     362    8989
+
 
 awk '{print $2"\t"$1}' diamond.out |sort -u  -k1,1 >NamedDiamondEffectors.tab
 
 
-
+less ../mikado.loci.ancestral.gff3 |sed 's/ID=/ID=\t/g' |sed 's/transcripts=/transcripts=\t/g' |sed 's/;/\t/1' >mikado.loci.ancestral.GFFGREPMOD
 
 #get all mrna, cds, exons for diamond effectors
-awk '{print $1}' NamedDiamondEffectors.tab|while read line; do  grep -w  $line SortedOrderedSCNGenePredictions.gff3 >>DiamondEffectors.gffmod;done &
+awk '{print $1}' NamedDiamondEffectors.tab|while read line; do  grep -w  $line mikado.loci.ancestral.GFFGREPMOD >>DiamondEffectors.gffmod;done &
 #grab genes
-less DiamondEffectorsGene.gffmod |awk '$3=="gene"' |paste - NamedDiamondEffectors.tab |cut -f 1-10,12 |awk '{print $1,$2,$3,$4,$5,$6,$7,$8,$9$10";Note="$11}' |tr " " "\t" >DiamondEffectorsGene.gff
+less DiamondEffectors.gffmod |awk '$3=="locus"' |paste - NamedDiamondEffectors.tab |cut -f 1-12,14 |awk -F"\t" '{print $1,$2,$3,$4,$5,$6,$7,$8,$9$10":"$11$12";Note="$13}' |tr " " "\t" >DiamondEffectorsGene.gff
+
 #concat genes & all mrna, cds, exons for diamond effectors
-cat DiamondEffectorsGene.gff DiamondEffectors.gffmod |sed 's/ID=\t/ID=/g' |sed 's/Parent=\t/Parent=/g' >UnsortedDiamondEffectors.gff
+cat DiamondEffectorsGene.gff <(awk '$3!="locus"' DiamondEffectors.gffmod) |sed 's/ID=\t/ID=/g' |sed 's/Parent=\t/Parent=/g' >UnsortedDiamondEffectors.gff
 
 
 perl gff3sort/gff3sort.pl --precise --chr_order natural TidyUnsortedDiamondEffectors.gff >SortedTidyUnsortedDiamondEffectors.gff

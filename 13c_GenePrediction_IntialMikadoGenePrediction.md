@@ -174,3 +174,19 @@ mikado pick \
    --subloci_out mikado.subloci.gff3
 ###############################################################################
 ```
+
+
+### Collapse mikado loci into cufflinks transcripts
+```
+Found through manual annotation that this annotation is the most reliable.  removes single exon genes and those with early stop codons.  
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/23_Mikado
+
+ml cufflinks
+#2.2.1"
+
+
+gffread  -U  -K -M -Q -VHE -g SCNgenome.fasta  mikado.loci.gff3  -o mikado.loci.ancestral.gff3  -x  mikado.loci.ancestralVHEJ_transcripts.fasta -y  mikado.loci.ancestralVHEJ_proteins.fasta
+
+
+
+```

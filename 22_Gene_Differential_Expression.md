@@ -20,16 +20,16 @@ for f in *bam; do echo "ml samtools; samtools index "$f"; ml subread; featureCou
 #/work/GIF/remkv6/Baum/04_Dovetail2Restart/38_Expression/01_AllExpressionDatasetsSeparate
 
 #creates the command below
-ls -1 *txt |while read line; do echo "<(awk '{print \$1,\$7}' "$line")"; done |tr "\n" " " |sed 's/^/paste /g' |sed 's/$/ |less/g' |less
+ls -1 *mRNACounts.txt |while read line; do echo "<(awk '{print \$1,\$7}' "$line")"; done |tr "\n" " " |sed 's/^/paste /g' |sed 's/$/ |less/g' |less
 
 #gets all the samples in the correct order
-paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fq_sorted_GeneCounts.txt)  |less
+paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fq_sorted_mRNACounts.txt)  |less
 
 #createst the header to the deseq table
-paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fq_sorted_GeneCounts.txt)   |awk 'NR==2 {print $1,$14,$16,$18,$20,$22,$24,$26,$28,$30,"X"$2,"X"$4,"X"$6,"X"$8,"X"$10,"X"$12}' |tr " " "\t" |sed 's/_val_1\.fq_sorted.bam//g' >header.txt
+paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fq_sorted_mRNACounts.txt)     |awk 'NR==2 {print $1,$14,$16,$18,$20,$22,$24,$26,$28,$30,"X"$2,"X"$4,"X"$6,"X"$8,"X"$10,"X"$12}' |tr " " "\t" |sed 's/_val_1\.fq_sorted.bam//g' >header.txt
 
 Creates all the counts for the deseq table
-paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fq_sorted_GeneCounts.txt)   |awk 'NR>2 {print $1,$14,$16,$18,$20,$22,$24,$26,$28,$30,$2,$4,$6,$8,$10,$12}' |tr " " "\t" >tailer.txt
+paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fq_sorted_mRNACounts.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fq_sorted_mRNACounts.txt)   |awk 'NR>2 {print $1,$14,$16,$18,$20,$22,$24,$26,$28,$30,$2,$4,$6,$8,$10,$12}' |tr " " "\t" >tailer.txt
 
 cat header.txt tailer.txt >DeseqTable.txt
 
@@ -63,7 +63,7 @@ ml r-deseq2/1.20.0-py2-r3.5-openmpi3-zhebatp
  mean-dispersion relationship
  final dispersion estimates
  fitting model and testing
- -- replacing outliers and refitting for 953 genes
+ -- replacing outliers and refitting for 804 genes
  -- DESeq argument 'minReplicatesForReplace' = 7
  -- original counts are preserved in counts(dds)
  estimating dispersions
@@ -72,7 +72,8 @@ ml r-deseq2/1.20.0-py2-r3.5-openmpi3-zhebatp
  >  table(res$padj<0.05)
 
  FALSE  TRUE
-  6717  7939
+  5866  5748
+
 
 
 
@@ -84,6 +85,9 @@ ml r-deseq2/1.20.0-py2-r3.5-openmpi3-zhebatp
   p <- p + geom_text(aes_string(x = "PC1", y = "PC2", label = "name"), color = "black")
   print(p)
   q()
+
+  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3<0{print $1}' >AllGlandvsAllWholeWormListDown.tab
+  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3>0{print $1}' >AllGlandvsAllWholeWormListUp.tab
 ```
 
 ### Compare MM10 GLAND AND PA3 Gland
@@ -118,17 +122,29 @@ less DeseqTable.txt |cut -f 1,11,12,13,14,15,16 |awk '{print $1,$2,$6,$7,$3,$4,$
 
 
 
+ estimating size factors
+ estimating dispersions
+ gene-wise dispersion estimates
+ mean-dispersion relationship
+ final dispersion estimates
+ fitting model and testing
+ >  res <- results(dds)
+ >  table(res$padj<0.05)
+
  FALSE
- 11701
+  9270
 
 
-#DIDNT MAKE THIS THE SECOND TIME AROUND
+
+#DIDNT MAKE THIS THE SECOND TIME AROUND, nor the third
  rld <- rlogTransformation(dds)
  library(ggplot2)
  p <- plotPCA(rld)
  p <- p + geom_text(aes_string(x = "PC1", y = "PC2", label = "name"), color = "black")
  print(p)
  q()
+
+
 ```
 
 ### Compare PA3 Gland to PA3 parasitic compatible whole worm
@@ -161,7 +177,10 @@ fitting model and testing
 
 
 FALSE  TRUE
- 3869   608
+ 3410   515
+
+ less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3<0{print $1}' >pPA3CvsPA3GlandListDown.tab
+ less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3>0{print $1}' >pPA3CvsPA3GlandListUp.tab
 
 ```
 
@@ -197,7 +216,10 @@ fitting model and testing
 
 
 FALSE  TRUE
- 1689    19
+ 1169    10
+
+ less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<11 && NR>1 && $3<0{print $1}' >ppPA3vspPA3CListDown.tab
+ less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<11 && NR>1 && $3>0{print $1}' >ppPA3vspPA3CListUp.tab
 ```
 
 ### Compare PA3 preparasitic J2 to parasitic J2 incompatible
@@ -229,7 +251,11 @@ final dispersion estimates
 fitting model and testing
 
 FALSE  TRUE
- 5891  8316
+ 5509  6252
+
+ less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<6253 && NR>1 && $3<0{print $1}' >ppPA3vspPA3ICListDown.tab
+ less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<6253 && NR>1 && $3>0{print $1}' >ppPA3vspPA3ICListUp.tab
+
 ```
 
 ### Compare PA3 compatible parasitic to PA3 incompatible parasitic
@@ -262,7 +288,12 @@ final dispersion estimates
 fitting model and testing
 
 FALSE  TRUE
- 7150  8252
+ 5598  6438
+
+
+ #needs updated
+  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<6439 && NR>1 && $3<0{print $1}' >pPA3CvspPA3ICListDown.tab
+  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<6439 && NR>1 && $3>0{print $1}' >pPA3CvspPA3ICListUp.tab
 ```
 
 ### Compare 2 PA3 rep to 3 MM10 rep
@@ -290,9 +321,10 @@ less DeseqTable.txt |cut -f 1,11,12,13,14,15,16 |awk '{print $1,$6,$7,$3,$4,$5}'
 
 
  FALSE  TRUE
-  1673    11
+  2323     6
 
-#did not do this second time around
+
+#did not do this second time around, nor the third
  rld <- rlogTransformation(dds)
  library(ggplot2)
  p <- plotPCA(rld)
@@ -302,9 +334,10 @@ less DeseqTable.txt |cut -f 1,11,12,13,14,15,16 |awk '{print $1,$6,$7,$3,$4,$5}'
 
 
 
-#needs updated
- less ../39_DifferentialExpression/2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<7284 && NR>1 && $3<0{print $1}' >2PA3vs3MM10GlandListDown.tab
- less ../39_DifferentialExpression/2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<7284 && NR>1 && $3>0{print $1}' >2PA3vs3MM10GlandListUp.tab
+#needs updated, done
+ less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<7 && NR>1 && $3<0{print $1}' >2PA3vs3MM10GlandListDown.tab
+ less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<7 && NR>1 && $3>0{print $1}' >2PA3vs3MM10GlandListUp.tab
+
 
 ```
 
@@ -312,9 +345,7 @@ less DeseqTable.txt |cut -f 1,11,12,13,14,15,16 |awk '{print $1,$6,$7,$3,$4,$5}'
 ```
 less DeseqTable.txt |cut -f 1,11,12,13,14,15,16 |awk '{print $1,$6,$7,$4,$5}' |tr " " "\t" >2PA3vs2MM10GlandDeseqTable.txt
 
-
-
- awk 'NR==1' 2PA3vs2MM10GlandDeseqTable.txt |tr "\t" "\n"|awk '{if(NR==1){print $0} else if(NR<4) {print $0"\t0"} else {print $0"\t1"}}' >2PA3vs2MM10GlandConditionTable.txt
+awk 'NR==1' 2PA3vs2MM10GlandDeseqTable.txt |tr "\t" "\n"|awk '{if(NR==1){print $0} else if(NR<4) {print $0"\t0"} else {print $0"\t1"}}' >2PA3vs2MM10GlandConditionTable.txt
 
  library("DESeq2")
  dat<-read.table("2PA3vs2MM10GlandDeseqTable.txt",header = T,quote = "",row.names = 1)
@@ -333,10 +364,11 @@ less DeseqTable.txt |cut -f 1,11,12,13,14,15,16 |awk '{print $1,$6,$7,$4,$5}' |t
  write.csv(resdata, file="2PA3vs2MM10GlandGland",quote = FALSE,row.names = F)
 
  FALSE  TRUE
-  1696    27
+  1491    28
 
-#needs updated
- less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<28 && NR>1 && $3<0{print $1}' >2PA3vs2MM10GlandListDown.tab
- less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<28 && NR>1 && $3>0{print $1}' >2PA3vs2MM10GlandListUp.tab
+
+#needs updated, done
+ less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<29 && NR>1 && $3<0{print $1}' >2PA3vs2MM10GlandListDown.tab
+ less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<29 && NR>1 && $3>0{print $1}' >2PA3vs2MM10GlandListUp.tab
 
 ```

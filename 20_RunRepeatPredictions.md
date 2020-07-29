@@ -63,16 +63,16 @@ Total                  207861       46760327     29.92%
 ### Get gene counts that are not repetitive
 ```
 #use EDTA repeats
-less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq |wc -l
-28169
+less ../../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq |wc -l
+19652
 
 #Use EDTA repeats and TRF repeats
-less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |bedtools intersect -v -wo -a - -b ../../31_Synteny/02_738Assembly/02_iadhore/01_circos/TRF.bed |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq |wc -l
-27019
+less ../../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |bedtools intersect -v -wo -a - -b ../../31_Synteny/02_738Assembly/02_iadhore/01_circos/TRF.bed |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq |wc -l
+19451
 
 #Use repeatmodeler repeats, EDTA, and TRF
-less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |bedtools intersect -v -wo -a - -b ../../31_Synteny/02_738Assembly/02_iadhore/01_circos/TRF.bed |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff  |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq |wc -l
-27019
+less ../../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |bedtools intersect -v -wo -a - -b ../../31_Synteny/02_738Assembly/02_iadhore/01_circos/TRF.bed |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff  |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq |wc -l
+19451
 
 
 ```
@@ -85,33 +85,37 @@ less ../../31_Synteny/02_738Assembly/02_iadhore/mikado.loci.gff3 |awk '$3=="CDS"
 /work/GIF/remkv6/Baum/04_Dovetail2Restart/33_EDTA/EDTA
 
 
-#30% coverage of a mrna by a repeat
-bedtools intersect -wo -f .3 -b SCNgenome.fasta.EDTA.intact.gff -a ../../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 >EDTA.tab
+#50% coverage of a mrna by a repeat
+bedtools intersect -wo -f .5 -b SCNgenome.fasta.EDTA.intact.gff -a ../../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 >EDTA.tab
 
-#30% coverage of a mrna by a repeat
-bedtools intersect -wo -f .3 -b SCNgenome.fasta.EDTA.intact.gff -a ../../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
-   1620    3240  225214
+#50% coverage of a mrna by a repeat
+bedtools intersect -wo -f .5 -b SCNgenome.fasta.EDTA.intact.gff -a ../../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
+586    1172   90338
+
 
 #Any overlap with an EDTA repeat
-bedtools intersect -wo  -b SCNgenome.fasta.EDTA.intact.gff -a ../../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
-      3594    7188  492809
+bedtools intersect -wo  -b SCNgenome.fasta.EDTA.intact.gff -a ../../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
+2620    5240  397235
+
 
 ```
 
 ### Repeatmodeler tab file
 ```
-#30% coverage of an mRNA
-bedtools intersect -f .3 -wo  -b SCNgenome.fasta.out.gff -a ../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |awk '{print $1"\t"$3}' |sed 's/"//g' >RepeatModeler.tab
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/10_RepeatModeler
 
-#30% coverage of an mRNA by a repeat
-[remkv6@condo042 10_RepeatModeler]$ bedtools intersect -f .3 -wo  -b SCNgenome.fasta.out.gff -a ../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18
-|sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
-   8488   42440  430327
+#50% coverage of an mRNA
+bedtools intersect -f .5 -wo  -b SCNgenome.fasta.out.gff -a ../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |awk '{print $1"\t"$3}' |sed 's/"//g' >RepeatModeler.tab
+
+#50% coverage of an mRNA by a repeat
+bedtools intersect -f .5 -wo  -b SCNgenome.fasta.out.gff -a ../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="mRNA"' |cut -f 9,18|sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
+2330   11650  153217
+
 
 #Any overlap with a repeatmodeler repeat   
-bedtools intersect -wo  -b SCNgenome.fasta.out.gff -a ../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed '
-s/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
-  25575  127875 1288617
+bedtools intersect -wo  -b SCNgenome.fasta.out.gff -a ../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="mRNA"' |cut -f 9,18 |sed 's/;/\t/1' |cut -f 1,3 |sed 's/ID=//1' |awk 'substr($2,1,6)!="Parent"' |sort -u -k1,1 |wc
+15711   78555 1027886
+
 
 
 ```

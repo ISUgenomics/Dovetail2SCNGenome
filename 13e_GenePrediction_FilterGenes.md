@@ -129,7 +129,7 @@ sh RenameAllGenomethreaderAlignments.sh
 #/work/gif/remkv6/Baum/04_DovetailSCNGenome/01_mikadoRerurn/05_FinalGenePrediction
 
 #merge with all genomethreader alignments of Met start encoded proteins and to All H.glycines EST alignments
-gffread -E -K -M -Q -VHEJ -g ../SCNgenome.fasta  OrderedSCNGenePredictions.gff3 ../03_MethionineProteinsOnly/*/*aln  -o AllProtsMetESTMergeOrderedSCNGenePredictions.gff3
+gffread -E -K -M -Q -VHEJ -g ../SCNgenome.fasta  ../AllRNASEQClass2.gtf ../NonRrnaRNASEQ_stringtie.gtf ../SCNgenome.transcripts.gff3 ../SCNgenome.Trinity-GG.gff3 ../SCNgenome.DovetailSCNMaker4.all.maker.transcripts.gff3 ../brakermasked.gff ../tidiedBrakerUnmasked.gff3 ../mikado.loci.gff3  -o AllProtsMetESTMergeOrderedSCNGenePredictions.gff3 -x  MergingTestSCNVHEJ_transcripts.fasta -y  MergingTestSCNVHEJ_proteins.fasta
 
 #How many genes are there if we merge with all transcripts starting with M from the genomethreader alignments of all genome-guided transcriptomes?
 bedtools intersect -wo -f .3 -a <(awk '$3=="locus"' AllProtsMetMergeESTmergeMergeOrderedSCNGenePredictions.gff3) -b FixedaugustusreformatName.gff3 |awk '$12=="gene"' |cut -f 1-9  |wc
@@ -142,6 +142,19 @@ awk '{if($3=="locus") {print $1,$2,"gene",$4,$5,$6,$7,$8,$9} else {print $1,$2,$
 ml tabix/2013-12-16-py2-talztjl
 bgzip MergingTestSCN.gff3
 tabix -p gff MergingTestSCN.gff3.gz
+
+
+# Continued 05/14/20, as the previous prediction did poorly on busco3 protein mode.
+Lets convert to proteins and see how it does with busco protein mode
+
+ml cufflinks
+gffread -VHEJ MergingTestSCN.gff3  -g ../SCNgenome.fasta  -t mRNA -x  MergingTestSCNVHEJ_transcripts.fasta -y  MergingTestSCNVHEJ_proteins.fasta
+
+
+grep -c ">" MergingTestSCNVHEJ_proteins.fasta
+98024
+58% busco complete, not good enough
+
 
 
 ```

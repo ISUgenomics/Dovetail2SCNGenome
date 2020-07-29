@@ -151,8 +151,7 @@ ls *lst >input.txt
 cd ../
 mkdir subject
 cd subject/
-awk '$3=="gene"' ../fixed.augustus.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' |awk '{print $9$7,$1}' |awk '{print >> $2 ".lst"; close
-($2)}'
+awk '$3=="gene"' ../fixed.augustus.gff3 |sed 's/ID=//g' |sed 's/;/\t/g' |awk '{print $9$7,$1}' |awk '{print >> $2 ".lst"; close($2)}'
 sed -i 's/ .*//g' *.lst
 ls *lst >input.txt
 paste <(cut -f 1 -d "." input.txt) <(awk '{print "subject/"$1}' input.txt)>subject.ini
