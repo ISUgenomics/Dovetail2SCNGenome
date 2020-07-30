@@ -43,7 +43,7 @@ Max:    113
 ### Mikado.loci.gff3 round2 clustered by cufflinks
 ```
 #gene length
-less mikado.loci.ancestral.gff3 |awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+less mikado.loci.ancestral.gff3 |awk '$3=="locus"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
 Total:  102,643,360
 Count:  22,465
 Mean:   4,569
