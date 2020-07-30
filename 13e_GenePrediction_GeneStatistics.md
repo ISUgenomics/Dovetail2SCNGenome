@@ -40,65 +40,50 @@ Max:    113
 
 ```
 
-### Mikado.loci.gff3 round2, including repeat genes
+### Mikado.loci.gff3 round2 clustered by cufflinks
 ```
 #gene length
-less mikado.loci.gff3 |awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
-Total:  120,922,982
-Count:  38,646
-Mean:   3,128
-Median: 821
-Min:    199
-Max:    465,216
+less mikado.loci.ancestral.gff3 |awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+Total:  102,643,360
+Count:  22,465
+Mean:   4,569
+Median: 2,065
+Min:    220
+Max:    334,901
+
 
 #transcript length
-less mikado.loci.gff3 |awk '$3=="mRNA"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
-Total:  142,902,933
-Count:  45,286
-Mean:   3,155
-Median: 1,034
-Min:    199
-Max:    465,216
+less mikado.loci.ancestral.gff3|awk '$3=="mRNA"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+Total:  103,726,162
+Count:  23,933
+Mean:   4,334
+Median: 1,957
+Min:    220
+Max:    334,904
+
 
 #exons per transcript
-less mikado.loci.gff3 |awk '$3=="CDS" ' |cut -f 9 |sed 's/\./\t/3' |awk '{print $1}' |sort|uniq -c |awk '{print $1}' |summary.sh
-Total:  258,802
-Count:  45,286
-Mean:   5
-Median: 3
-Min:    1
-Max:    194
-
-```
-
-### mikado.loci.gff3
-```
-#exons per transcript
-less mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |cut -f 9 |sed 's/\./\t/3' |awk '{print $1}' |sort|uniq -c |awk '{print $1}' |summary.sh
-Total:  228,567
-Count:  31,566
+less mikado.loci.ancestral.gff3|awk '$3=="CDS" ' |cut -f 9 |sed 's/\./\t/3' |awk '{print $1}' |sort|uniq -c |awk '{print $1}' |summary.sh
+Total:  179,476
+Count:  23,933
 Mean:   7
 Median: 5
 Min:    1
 Max:    194
 
-#how many genes are not repetitive
-less mikado.loci.gff3 |awk '$3=="CDS"' |bedtools intersect -v -wo -a - -b ../../10_RepeatModeler/SCNgenome.fasta.out.gff |cut -f 9 |sed 's/\./\t/2' |awk '{print $1}' |sort|uniq|wc
-25180   25180  650224
+#Exon length
+less mikado.loci.ancestral.gff3|awk '$3=="exon"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
+Total:  28,809,023
+Count:  182,837
+Mean:   157
+Median: 128
+Min:    1
+Max:    5,764
 
-#how many are repetitive then?
-By subtraction that is: 13,466 genes
 
-#gene sizes that are not repetitive
-less NonRepetitiveGenes.gff3 |awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
-Total:  104,488,696
-Count:  25,180
-Mean:   4,149
-Median: 1,726
-Min:    199
-Max:    465,216
 
 ```
+
 ### gene stats of braker masked annotation
 ```
 less augustus.hints.gff |awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
@@ -137,16 +122,6 @@ Max:    65,204
 ```
 
 
-## Round2 of mikado using all ESTs from tylenchida
-```
-less mikado.loci.gff3| awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
-Total:  131,514,741
-Count:  39,516
-Mean:   3,328
-Median: 920
-Min:    199
-Max:    465,216
-```
 
 ### gene calls from 738 genome
 ```
@@ -161,7 +136,7 @@ Max:    65,717
 
 ```
 
-### Functional annotation stats
+### Functional annotation stats -- needs updated 7/30/20
 ```
 #interproscan
 less 01_Interpro/interproAnnot.tsv |awk '{print $1}' |sort|uniq|wc
