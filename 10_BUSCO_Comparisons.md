@@ -268,3 +268,43 @@ less missing_busco_list_PseudoBUSCO.tsv |grep -v "#" |grep -f - ../../09_ManualB
    141     141    1225
  141 + 674 = 815 == 815/982 == 82.99%
 ```
+
+
+### Decided to use mikado and cufflinks to generate the annotation.  What is the busco score?
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/06_BuscoPseudomoleculeProteins
+
+ln -s /work/GIF/remkv6/Baum/04_Dovetail2Restart/47_MikadoFinalize/mikado.loci.ancestralVHEJ_proteins.fasta
+
+ml miniconda2; source activate busco; export AUGUSTUS_CONFIG_PATH=/work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/05_pseudomolecule/config;  run_BUSCO.py -i  mikado.loci.ancestralVHEJ_proteins.fasta -l /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison//04_590D2/busco-3.0.1-ze7lkiedvzma2wiiehfdwa7usmcgk5wi/nematoda_odb9 -o PseudoBUSCOmikadoCufflinksFinal -m prot -c 15 -s Hglycines2 -f
+
+INFO    C:65.8%[S:54.5%,D:11.3%],F:8.7%,M:25.5%,n:982
+INFO    646 Complete BUSCOs (C)
+INFO    535 Complete and single-copy BUSCOs (S)
+INFO    111 Complete and duplicated BUSCOs (D)
+INFO    85 Fragmented BUSCOs (F)
+INFO    251 Missing BUSCOs (M)
+INFO    982 Total BUSCO groups searched
+INFO    BUSCO analysis done with WARNING(s). Total running time: 198.006854057 seconds
+INFO    Results written in /work/GIF/remkv6/Baum/04_Dovetail2Restart/09_BuscoComparison/06_BuscoPseudomoleculeProteins/run_PseudoBUSCOmikadoCufflinksFinal/
+
+#### Now take these proteins and combine with genome mode busco completes. How many are missing total?
+cat missing_busco_list_PseudoBUSCOmikadoCufflinksFinal.tsv ../../05_pseudomolecule/run_PseudoBUSCO/missing_busco_list_PseudoBUSCO.tsv |grep -v "#" |sort |uniq -c |awk '$1==2' |wc
+    179     358    3580
+
+#### Now find out how many of these 179 are found via the manual blast?
+cat missing_busco_list_PseudoBUSCOmikadoCufflinksFinal.tsv ../../05_pseudomolecule/run_PseudoBUSCO/missing_busco_list_PseudoBUSCO.tsv |grep -v "#" |sort |uniq -c |awk '$1==2{print $2}' |grep -f - ../../09_ManualBlastsOfBuscoGenes/AddBUSCOandMikadolength.blastout |awk '$11<.01' |awk '{print $14/$16}' |awk '$1<1.6 && $1>.4' |wc
+    115     115     995
+
+
+So to get the complete total, 646 for protein mode, 634 for genome mode.  179 were missing in both datasets.  115 of these 179 were found with a manual blast using an evalue cutoff of.01 and a length cutoff of '$1<1.6 && $1>.4'.
+
+Total complete with manual blast == 982-(179-115) =918 == 918/982 == .9348
+Total complete with just busco genome +protein mode scores == 982-179 = 803 complete or 803/982 == .8177
+So the current SCN genome has a complete score from busco only at 81.8%, but manual investigation reveals that this total is at 93.5%.
+```
+
+```
+
+
+```
