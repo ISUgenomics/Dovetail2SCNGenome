@@ -3,48 +3,82 @@
 
 ### NR Blast compilation
 ```
-#/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/06_Combine
-cat ../02_Prots2Nr/SuperSplitter/*blastp.out |sort -k1,1V -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tNRBlastp:/g' >NRBlastp.tab
+/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/02_Prots2Nr/SuperSplitter
+
+cat *blastp.out |sort -k1,1V -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tNRBlastp:/g' >NRBlastp.tab
 ```
 ### NT Blastn annotation
 ```
-#/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/06_Combine
-cat ../03_Transcrips2Nt/OrderedSCNGenePredictions_VHEJtranscripts.part*blastn.out |sort -k1,1V -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tNTBlastn:/g' >NTBlastn.tab
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/03_Transcrips2Nt
+cat *blastn.out |sort -k1,1V -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tNTBlastn:/g' >NTBlastn.tab
 ```
 ### Uniprot Blastp
 ```
-#/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/06_Combine
-cat ../04_ProtsUniprot/OrderedSCNGenePredictionsVHEJ_proteins.part*out |sort -u -k1,1V |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tUPBlastp:/g'> UPBlastp.tab
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/04_ProtsUniprot
+cat *blastp.out |sort -u -k1,1V |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tUPBlastp:/g'> UPBlastp.tab
 ```
 ### Uniprot Blastx
 ```
-cat ../05_TransUniprot/Ordered*blastx.out |sort -k1,1 -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tUPBlastx:/g' >UPBlastx.tab
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/05_TransUniprot
+cat *blastx.out |sort -k1,1 -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tUPBlastx:/g' >UPBlastx.tab
 ```
 
 ### Interproscan annotation
 ```
+```
+
+
+### Interproscan annotation
+```
+#How many informative interproscan annotations are there?
+cat *gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |wc
+ 157033 2259940 31882682
+#How many mRNAs were annotated with informative annotations
+cat *gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |sort -k1,1V -u |wc
+19215  273421 3758676
+
+#The fields are all different for each of these separations of the interproscan annotation, so 6 different files created
+cat *gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if(($2=="PANTHER" ||$2=="SMART" ||$2=="SUPERFAMILY") && NF==10) {print $1"\t"$9} else if(($2=="PANTHER" ||$2=="SMART" ||$2=="SUPERFAMILY") && NF==11) {print $1"\t"$9","$11} else if(($2=="PANTHER" ||$2=="SMART" ||$2=="SUPERFAMILY") &&  NF==12) {print $1"\t"$8","$10","$12} else {next}}' >PantherSmartSuperfamily.tab
+
+cat *gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if($2=="CDD" && NF==11) {print $1"\t"$9","$10} else if($2=="CDD" && NF==12) {print $1"\t"$9","$10","$13} if ($2=="CDD" && NF==13) {print $1"\t"$8","$10","$11","$13} else {next}}' >CDD.tab
+
+cat *gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if(($2=="PIRSF" ||$2=="Gene3D" )&& NF==10) {print $1"\t"$9} else if (($2=="PIRSF"||$2=="Gene3D" ) && NF==11) {print $1"\t"$9","$11} else if(($2=="Gene3D" ||$2=="PIRSF")  && NF==12) {print $1"\t"$10}else if(($2=="Gene3D" ||$2=="PIRSF")  && NF==13) {print $1"\t"$9","$11} else if(($2=="Gene3D" ||$2=="PIRSF")  && NF==14) {print $1"\t"$9","$11} else {next}}' > Gene3dPirsf.tab
+
+cat *gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if($2=="SFLD" || $2=="MobiDBLite") {print $1"\t"$10","$9} else if($2=="Coils") {print $1"\t"$9} else {next}}' >CoilsSfldMobidblite.tab
+
+cat *gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if($2=="Pfam" &&NF==11) {print $1"\t"$9","$10} else if($2=="Pfam" &&NF==12) {print $1"\t"$9","$10","$12} else if($2=="Pfam" && NF==13) {print $1"\t"$8","$10","$12} else {next}}' >Pfam.tab
+
+cat *gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |awk -F"\t" '{if(($2=="PRINTS" ||$2=="ProDom" ||$2=="ProSiteProfiles" || $2=="TIGRFAM" ||$2=="ProSitePatterns" ||$2=="Hamap")&& NF==11 ) {print $1"\t"$9","$10} else if (($2=="PRINTS" ||$2=="ProDom" ||$2=="ProSiteProfiles" || $2=="TIGRFAM" ||$2=="ProSitePatterns" ||$2=="Hamap" )&& NF==12 ) {print $1"\t"$9","$10","$12} else if (($2=="PRINTS" ||$2=="ProDom" ||$2=="ProSiteProfiles" || $2=="TIGRFAM" ||$2=="ProSitePatterns" ||$2=="Hamap")&& NF==13 ) {print $1"\t"$8","$10","$11","$13} else {next}}' >PrintsProdomPrositepatternsPrositeprofilesTigrfamHamap.tab
+
+#did I get all of the mRNA's?
+cat *tab |sort -u -k1,1 |wc
+  19215   55377 1437044
+#yes
+
+#did I get all of the annotations?
+cat *tab |wc
+157030  489415 14373210
+
+#How many are exactly the same?
+$ cat *tab |sort|uniq|wc
+ 105681  322508 9549698
 
 
 
-
-#had to rerun this on the new annotation 4/9/20
-
-less  ../01_Interpro/interproAnnot_1.gff3 |awk 'NR<282848 && $3!="polypeptide"' |cut -f 1,2,9- |sed 's/;/\t/3' |cut -f 1,2,4 |awk 'substr($1,1,1)!="#"' |sed 's/\t/:/2' |uniq |awk '{arr[$1]=arr[$1] "\t" $2}END{for(i in arr)print i,arr[i]}' |sed 's/\t/#/1' |sed 's/\t/;/g' |sed 's/#/\t/1' |sed 's/\t/\tIPR:/1'  >interproAnnot.tab1    
 ```
 ### Combine all annotations
 ```
-#Fix the oddball annotation of transcript in $3
- awk -F"\t" '{if($3=="transcript"){print $1"\t"$2"\tmRNA\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9} else {print $0}}' OrderedSCNGenePredictions.gff3 >OddTranscriptFixOrderedSCNGenePredictions.gff3
 
+#get all the blasts together and interproscan together
+awk -F"\t" '{arr[$1]=arr[$1] "\t" $2}END{for(i in arr)print i,arr[i]}' *tab  |sed 's/\t/#/1'|sed 's/\t/|/g' |sed 's/Name=//g'|sed 's/=//g' |sed 's/#/\tNote=/1'  >CombineAnnot.tab1
 
-#get all the blasts together
-awk -F"\t" '{arr[$1]=arr[$1] "\t" $0}END{for(i in arr)print i,arr[i]}' *tab |cut -f 1,3,5,7,9,11  |sed 's/\t/#/1'|sed 's/\t/|/g' |sed 's/=//g'|sed 's/#/\tNote=/1' >CombineAnnot.tab1
+#How many mRNAs have an annotation?
+sort -u -k1,1V CombineAnnot.tab1 |wc
+  20322  514856 14300744
 
-#add in the interpro annotations
-awk '{arr[$1]=arr[$1] "\t" $0}END{for(i in arr)print i,arr[i]}' *tab1 |sed 's/ ;/\t/1' |cut -f 2,3,5 |sed 's/\t/;/2' >CombeinAnnotIPRs.tab2
-
-
-less ../07_NewGenes/OddTranscriptFixOrderedSCNGenePredictions.gff3 |awk '$3=="mRNA"' |sed 's/ID=/ID=\t/g' |sed 's/;/\t;/1' >OddTranscriptFixOrderedSCNGenePredictionsgff3.GREPMOD
+#How many genes have an annotation?
+less CombineAnnot.tab1 |sed 's/\./\t/2' |cut -f 1,3 |sort -k1,1 -u |wc
+ 19136  482377 13406686
 
 #find the mrnas lacking annotations
 awk '{print $1}' CombeinAnnotIPRs.tab2 |cat - <(cut -f 10 OddTranscriptFixOrderedSCNGenePredictionsgff3.GREPMOD) |sort|uniq -c |awk '$1==1 {print $2}' |cat - CombeinAnnotIPRs.tab2 >AllGenesWWOannot.tab3
