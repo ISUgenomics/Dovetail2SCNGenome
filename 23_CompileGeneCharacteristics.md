@@ -3,19 +3,19 @@
 /work/GIF/remkv6/Baum/04_Dovetail2Restart/40_PrepareGeneCharacteristics
 
 #mrna locations
-awk '$3=="mRNA"' ../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions.gff3 |sed 's/ID=//g' |sed 's/;/\t/1' |awk '{print $9"\t"$1":"$4"-"$5}' >mRNALocations.tab
+awk '$3=="mRNA"' ../47_MikadoFinalize/mikado.loci.ancestral.gff3 |sed 's/ID=//g' |sed 's/;/\t/1' |awk '{print $9"\t"$1":"$4"-"$5}' >mRNALocations.tab
 
 #mrna sequences in tab format
-awk '{print $1}' ../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictions_VHEJtranscripts.fasta |tr "\n" "\t" |sed 's/>/\n/g' |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |sed '/^$/d' |awk '{print $1"\t"$2}' >mRNASeqs.tab
+awk '{print $1}' ../47_MikadoFinalize/mikado.loci.ancestralVHEJ_transcripts.fasta |tr "\n" "\t" |sed 's/>/\n/g' |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |sed '/^$/d' |awk '{print $1"\t"$2}' >mRNASeqs.tab
 
 
 #protein sequences in tab format
-awk '{print $1}' ../25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictionsVHEJ_proteins.fasta |tr "\n" "\t" |sed 's/>/\n/g' |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |sed '/^$/d' |awk '{print $1"\t"$2}'>protSeqs.tab
+awk '{print $1}' ../47_MikadoFinalize/mikado.loci.ancestralVHEJ_proteins.fasta |tr "\n" "\t" |sed 's/>/\n/g' |sed 's/\t/#/1' |sed 's/\t//g' |sed 's/#/\t/g' |sed '/^$/d' |awk '{print $1"\t"$2}'>protSeqs.tab
 
 #get all of the expression tabs
 for f in ../39_DifferentialExpression/02_mRNA/*Allgenes.tab;do ln -s $f;done
 
-#all functional annotations
+#all functional annotations #7/29/20 not done yet.
 ln -s  ../25_AnnotateGenes/01_Interpro/interproAnnot.tab1 interproAnnot.tab
 cat ../25_AnnotateGenes/06_Combine/NRBlastp.tab  AllmRNAsNA |sort -u -k1,1 >NRBlastpAllmRNA.tab
 cat ../25_AnnotateGenes/06_Combine/NTBlastn.tab  AllmRNAsNA |sort -u -k1,1 >NTBlastnAllmRNA.tab
@@ -42,7 +42,7 @@ grep -v "#" ../42_NLSPrediction/NLSsignals|cat - AllmRNAsNA |sort -u -k1,1 >NLSs
 
 ##Tandem repeat finder intersect for CDS
 #/work/gif/remkv6/Baum/04_DovetailSCNGenome/02_ProteinRepeats
-bedtools intersect -f .3 -wo -b TRF.bed -a OrderedSCNGenePredictions.gff3 |awk '$3=="CDS"' |cut -f 9 |sed 's/;/\t/g' |sed 's/Parent=//g' |cut -f 1 |sort|uniq>TRmRNAs.list
+bedtools intersect -f .3 -wo -b ../44_TRF/TRF.bed -a ../47_MikadoFinalize/mikado.loci.ancestral.gff3 |awk '$3=="CDS"' |cut -f 9 |sed 's/;/\t/g' |sed 's/Parent=//g' |cut -f 1 |sort|uniq|awk '{print $1"\tTRF"}' >TRFmRNAs.list
 
 
 
@@ -54,8 +54,8 @@ sh paste.sh
 less AllFeatures.tab1 |cut -f 1,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52,54,56,58,60,62,64,66 >DetrashedAllFeatures.tab1
 
 
-ls -1 *tab |tr "\n" "\t" |awk '{print "mRNA_Name\t"$0}' |sed 's/\.tab//g' |awk '{print $0}' >AllFeaturesHeader.tab1          
-paste AllFeaturesHeader.tab1 DetrashedAllFeatures.tab1 >FinishedAllFeatures.tab
+ls -1 *sorted |tr "\n" "\t" |awk '{print "mRNA_Name\t"$0}' |sed 's/\.tab//g' |awk '{print $0}' >AllFeaturesHeader.tab1          
+cat AllFeaturesHeader.tab1 DetrashedAllFeatures.tab1 >FinishedAllFeatures.tab
 
 
 

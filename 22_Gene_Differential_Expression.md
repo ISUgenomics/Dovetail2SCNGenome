@@ -76,9 +76,6 @@ ml r-deseq2/1.20.0-py2-r3.5-openmpi3-zhebatp
 
 
 
-
-
-
   rld <- rlogTransformation(dds)
   library(ggplot2)
   p <- plotPCA(rld)
@@ -86,8 +83,8 @@ ml r-deseq2/1.20.0-py2-r3.5-openmpi3-zhebatp
   print(p)
   q()
 
-  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3<0{print $1}' >AllGlandvsAllWholeWormListDown.tab
-  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3>0{print $1}' >AllGlandvsAllWholeWormListUp.tab
+  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3<0{print $1"\t"$3}' >AllGlandvsAllWholeWormListDown.tab
+  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3>0{print $1"\t"$3}' >AllGlandvsAllWholeWormListUp.tab
 ```
 
 ### Compare MM10 GLAND AND PA3 Gland
@@ -179,8 +176,8 @@ fitting model and testing
 FALSE  TRUE
  3410   515
 
- less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3<0{print $1}' >pPA3CvsPA3GlandListDown.tab
- less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3>0{print $1}' >pPA3CvsPA3GlandListUp.tab
+ less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3<0{print $1"\t"$3}' >pPA3CvsPA3GlandListDown.tab
+ less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<516 && NR>1 && $3>0{print $1"\t"$3}' >pPA3CvsPA3GlandListUp.tab
 
 ```
 
@@ -218,8 +215,8 @@ fitting model and testing
 FALSE  TRUE
  1169    10
 
- less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<11 && NR>1 && $3<0{print $1}' >ppPA3vspPA3CListDown.tab
- less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<11 && NR>1 && $3>0{print $1}' >ppPA3vspPA3CListUp.tab
+ less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<11 && NR>1 && $3<0{print $1"\t"$3}' >ppPA3vspPA3CListDown.tab
+ less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<11 && NR>1 && $3>0{print $1"\t"$3}' >ppPA3vspPA3CListUp.tab
 ```
 
 ### Compare PA3 preparasitic J2 to parasitic J2 incompatible
@@ -253,8 +250,8 @@ fitting model and testing
 FALSE  TRUE
  5509  6252
 
- less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<6253 && NR>1 && $3<0{print $1}' >ppPA3vspPA3ICListDown.tab
- less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<6253 && NR>1 && $3>0{print $1}' >ppPA3vspPA3ICListUp.tab
+ less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<6253 && NR>1 && $3<0{print $1"\t"$3}' >ppPA3vspPA3ICListDown.tab
+ less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<6253 && NR>1 && $3>0{print $1"\t"$3}' >ppPA3vspPA3ICListUp.tab
 
 ```
 
@@ -292,8 +289,8 @@ FALSE  TRUE
 
 
  #needs updated
-  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<6439 && NR>1 && $3<0{print $1}' >pPA3CvspPA3ICListDown.tab
-  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<6439 && NR>1 && $3>0{print $1}' >pPA3CvspPA3ICListUp.tab
+  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<6439 && NR>1 && $3<0{print $1"\t"$3}' >pPA3CvspPA3ICListDown.tab
+  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<6439 && NR>1 && $3>0{print $1"\t"$3}' >pPA3CvspPA3ICListUp.tab
 ```
 
 ### Compare 2 PA3 rep to 3 MM10 rep
@@ -335,8 +332,8 @@ less DeseqTable.txt |cut -f 1,11,12,13,14,15,16 |awk '{print $1,$6,$7,$3,$4,$5}'
 
 
 #needs updated, done
- less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<7 && NR>1 && $3<0{print $1}' >2PA3vs3MM10GlandListDown.tab
- less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<7 && NR>1 && $3>0{print $1}' >2PA3vs3MM10GlandListUp.tab
+ less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<7 && NR>1 && $3<0{print $1"\t"$3}' >2PA3vs3MM10GlandListDown.tab
+ less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<7 && NR>1 && $3>0{print $1"\t"$3}' >2PA3vs3MM10GlandListUp.tab
 
 
 ```
@@ -368,7 +365,18 @@ awk 'NR==1' 2PA3vs2MM10GlandDeseqTable.txt |tr "\t" "\n"|awk '{if(NR==1){print $
 
 
 #needs updated, done
- less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<29 && NR>1 && $3<0{print $1}' >2PA3vs2MM10GlandListDown.tab
- less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<29 && NR>1 && $3>0{print $1}' >2PA3vs2MM10GlandListUp.tab
+ less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<29 && NR>1 && $3<0{print $1"\t"$3}' >2PA3vs2MM10GlandListDown.tab
+ less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<29 && NR>1 && $3>0{print $1"\t"$3}' >2PA3vs2MM10GlandListUp.tab
 
+```
+
+### Create tables
+```
+#/work/GIF/remkv6/Baum/04_Dovetail2Restart/39_DifferentialExpression/02_mRNA
+
+awk '$3=="mRNA"' ../47_MikadoFinalize/mikado.loci.ancestral.gff3 |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |awk '{print $1"\tN/A"}' >AllmRNAsNA
+
+for f in *tab; do cat $f AllmRNAsNA |sort -u -k1,1 >${f%.*}Allgenes.tab; done
+
+awk '{arr[$1]=arr[$1] "\t" $2}END{for(i in arr)print i,arr[i]}' *Allgenes.tab >Expression.tab
 ```
