@@ -40,6 +40,23 @@ sh runGmap.sh SCNgenome /work/GIF/remkv6/Baum/04_Dovetail2Restart/12_Trinity/tri
 How many gene entries did we get in the gff?
 less SCNgenome.Trinity-GG.gff3 |awk '$3=="gene"' |grep "path1"|wc
 110013  990117 12716727
+
+
+[remkv6@condo075 23_Mikado]$ less SCNgenome.Trinity-GG.gff3|grep "path1" | awk '$3=="mRNA"{if($4>$5) {print $4-$5} else {print $5-$4}}'  |summary.sh
+Total:  702,181,499
+Count:  110,013
+Mean:   6,382
+Median: 563
+Min:    8
+Max:    1,725,421
+[remkv6@condo075 23_Mikado]$ less SCNgenome.Trinity-GG.gff3 |grep "\.mrna1\." |awk '$3=="exon"{if($4>$5) {print $4-$5} else {print $5-$4}}'  |summary.sh
+Total:  94,005,020
+Count:  499,230
+Mean:   188
+Median: 144
+Min:    1
+Max:    6,096
+
 ```
 
 
@@ -79,6 +96,21 @@ run_class.pl -a AllRNASEQ_sorted.bam -o AllRNASEQClass2.gtf -p 16 --verbose --cl
 #how many transcripts did we generate?
 less transcripts.gff |awk '$3=="transcript"' |wc
   60967  853538 8375727
+
+  less AllRNASEQClass2.gtf  |awk '$3=="transcript"{if($4>$5) {print $4-$5} else {print $5-$4}}'  |summary.sh
+  Total:  448,279,477
+  Count:  60,967
+  Mean:   7,352
+  Median: 1,985
+  Min:    23
+  Max:    392,100
+  [remkv6@condo075 23_Mikado]$ less AllRNASEQClass2.gtf  |awk '$3=="exon"{if($4>$5) {print $4-$5} else {print $5-$4}}'  |summary.sh      Total:  85,792,277
+  Count:  441,887
+  Mean:   194
+  Median: 149
+  Min:    1
+  Max:    13,732
+
 ```
 
 ### set up stringtie
@@ -96,6 +128,23 @@ stringtie NonRiboReads.bam -j 5 -p 16 -v -o NonRrnaRNASEQ_stringtie.gtf
 #how many transcripts did we generate?
 less NonRrnaRNASEQ_stringtie.gtf |awk '$3=="transcript"' |wc
  41504  747072 6605478
+
+ #get transcript and exon stats since there are no genes predicted here
+
+awk '$3=="transcript"{if($4>$5) {print $4-$5} else {print $5-$4}}' NonRrnaRNASEQ_stringtie.gtf |summary.sh
+Total:  233,044,848
+Count:  41,504
+Mean:   5,614
+Median: 2,173
+Min:    199
+Max:    523,622
+
+awk '$3=="exon"{if($4>$5) {print $4-$5} else {print $5-$4}}' NonRrnaRNASEQ_stringtie.gtf |summary.sh      Total:  70,045,713
+Count:  277,955
+Mean:   252
+Median: 153
+Min:    3
+Max:    15,070
 ```
 
 ### Set up portcullis to analyze splice junctions
@@ -171,4 +220,27 @@ sh runGmap.sh SCNgenome /work/GIF/remkv6/Baum/04_Dovetail2Restart/22_spadesTrans
 
 less SCNgenome.transcripts.gff3 |awk '$3=="gene"' |grep "path1"|wc
   70737  636633 10925032
+
+
+#get transcript and exon stats since no genes are predicted -- aligned with gmap so only counts for primary alignments here
+[remkv6@condo075 23_Mikado]$ less SCNgenome.transcripts.gff3 |grep "path1" |awk '$3=="mRNA"{if($4>$5) {print $4-$5} else {print $5-$4}}
+'  |summary.sh
+Total:  858,591,281
+Count:  70,737
+Mean:   12,137
+Median: 795
+Min:    2
+Max:    1,781,465
+
+less SCNgenome.transcripts.gff3 |grep "\.mrna1\." |awk '$3=="exon"{if($4>$5) {print $4-$5} else {print $5-$4}}'  |summary.sh
+Total:  63,693,622
+Count:  389,188
+Mean:   163
+Median: 114
+Min:    1
+Max:    9,438
+
+
+
+
 ```

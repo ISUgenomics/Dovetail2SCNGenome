@@ -25,11 +25,6 @@ cat *blastx.out |sort -k1,1 -u |cut -f 4,5,17 |sed 's/\t/:/2' |sed 's/\t/\tUPBla
 
 ### Interproscan annotation
 ```
-```
-
-
-### Interproscan annotation
-```
 #How many informative interproscan annotations are there?
 cat *gff3  |awk -F"\t" '$3!="polypeptide"' |awk -F"\t" '{if(substr($1,1,1)==">") {exit} else {print $0}}' |cut -f 1,2,4,5,7,9 |grep -v "#" |sed 's/;/\t/g' |wc
  157033 2259940 31882682
