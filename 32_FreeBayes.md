@@ -85,6 +85,25 @@ for f in *sam; do echo "ml samtools; samtools view --threads 16 -b "$f"|samtools
 # get alignment stats
 for f in *sam; do echo "ml samtools; samtools flagstat "$f" >"${f%.*}"stats"; done >stats.sh
 
+for f in *stats; do awk '{if(NR==1){print FILENAME,$1}else if(NR==5) {print FILENAME,$1,$5}}' $f;done |sed 's/(//g' |tr "\n" " " |sed 's/%/%\n/g' |awk '{print $1,$4,$2,$5}' |tr " " "\t" |less
+#######################################################################################################
+SCNgenome.G3_R1_fastqstats      548128146       549172676       99.81%
+SCNgenome.LY1_R1_fastqstats     782108051       791927572       98.76%
+SCNgenome.OP20_R1_fastqstats    457081693       473106024       96.61%
+SCNgenome.OP25_R1_fastqstats    184538022       186233955       99.09%
+SCNgenome.OP50_R1_fastqstats    34072149        34857042        97.75%
+SCNgenome.PA3_R1_fastqstats     742460927       743852256       99.81%
+SCNgenome.TN10_R1_fastqstats    11289582        11417284        98.88%
+SCNgenome.TN13_R1_fastqstats    335808379       336772437       99.71%
+SCNgenome.TN15_R1_fastqstats    1258134071      1262720552      99.64%
+SCNgenome.TN16_R1_fastqstats    5266615 5356162 98.33%
+SCNgenome.TN19_R1_fastqstats    274092409       275638595       99.44%
+SCNgenome.TN1_R1_fastqstats     451279049       456705114       98.81%
+SCNgenome.TN21_R1_fastqstats    895577919       903894102       99.08%
+SCNgenome.TN22_R1_fastqstats    1768922367      1774394578      99.69%
+SCNgenome.TN7_R1_fastqstats     244247401       248253921       98.39%
+SCNgenome.TN8_R1_fastqstats     1980377810      1987499308      99.64%
+#######################################################################################################
 
 
 ```
