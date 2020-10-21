@@ -75,8 +75,13 @@ bedtools intersect -wo -f .7 -a <(awk '$3=="mRNA"' ../../../../25_AnnotateGenes/
 awk '$3=="mRNA"' ../../../../29_Effectors/SCNgenome.effector_sorted.gff|sort|uniq|wc                                                                                       126    1134   35026
 
 
+```
 
 
+### SignalP 3.0
 
+```
+
+less mikado.loci.ancestralVHEJ_proteins.part-01.signalp3.out |grep ">" -A 4 |grep "cleavage" -B 4 |grep -v "\-\-" |tr "\n" "\t" |sed 's/>/\n/g' |awk '{print $1,$8,$20}'|less
 
 ```

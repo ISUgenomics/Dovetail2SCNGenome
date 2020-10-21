@@ -70,4 +70,5 @@ cat <(grep -v "#" ../../../../49_RenameChromosomes/01_Transfer2Box/OrderedSCNGen
 
 echo "ml miniconda3; source activate snpEff;  java -Xmx950G  -jar ~/.conda/pkgs/snpeff-5.0-0/share/snpeff-5.0-0/snpEff  -interval data/Hetgly/genes.gff Hetgly AllSNPS.vcf > snpEffOUT.vcf" >runSNPeff.sh
 
+#note, it looks like this program requires a large node, but may not be necessary for SCN.  Also this needs to be run on each line separately, so need to check that out before running.
 ```

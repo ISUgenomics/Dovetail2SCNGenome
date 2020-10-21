@@ -107,3 +107,46 @@ SCNgenome.TN8_R1_fastqstats     1980377810      1987499308      99.64%
 
 
 ```
+
+### Assign read groups
+```
+
+for f in *_sorted.bam; do echo "sh run_PicardReadGroups.sh "$f;done >addReadGroups.sh
+
+
+#check to make sure picard script will create proper names
+
+#run_PicardReadGroups.sh
+##################################################################################
+#!/bin/bash
+ulimit -c unlimited
+
+BAM="$1"
+ml picard
+
+
+RGID=$(basename $BAM |sed 's/_R1/\t/1' |cut -f 1)
+RGSM=$(basename $BAM| sed 's/_R1/\t/1' |cut -f 1 |awk '{print $0"SM"}'  )
+RGLB="${RGSM}-L001"
+RGPU=001
+RGPL=ILLUMINA
+echo -e "$RGID\t$RGSM\t$RGLB\t$RGPU"
+java -Djava.io.tmpdir=$TMPDIR -Xmx180G -jar $PICARD/picard.jar AddOrReplaceReadGroups \
+      I=${BAM} \
+      O=${BAM%.*}_new.bam \
+      RGID=$RGSM \
+      RGLB=$RGLB \
+      RGPL=$RGPL \
+      RGPU=$RGPU \
+      RGSM=$RGSM
+module load samtools
+samtools index ${bam%.*}_new.bam
+##################################################################################
+
+```
+
+### Remove duplicate reads
+```
+
+for f in *bam; do echo "ml picard; ml jdk; java -jar $PICARD MarkDuplicates I="$f" O="${f%.*}"Dedup.bam M="${f%.*}"Dedup.metrics.txt REMOVE_SEQUENCING_DUPLICATES=true";done >dedup.sh
+```
