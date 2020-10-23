@@ -5,25 +5,10 @@
 ```
 #work/GIF/remkv6/Baum/04_Dovetail2Restart/38_Expression/01_AllExpressionDatasetsSeparate/01_Genes
 
-#softlink all the bam files and their indices
-for f in ../../38_Expression/01_AllExpressionDatasetsSeparate/*_sorted.bam; do ln -s $f;done
-for f in ../../38_Expression/01_AllExpressionDatasetsSeparate/*_sorted.bam.bai; do ln -s $f;doneKJ3%$q       NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN5B.75-54KH
-
-#genome with old names
-ln -s ../../38_Expression/01_AllExpressionDatasetsSeparate/SCNgenome.fasta
-
-#copy and rename the chromosomes to their old names, so the scaffolds agree with the bam files above
-cp ../../49_RenameChromosomes/01_Transfer2Box/OrderedSCNGenePredictions.gff3 .
-awk '{print $2"\t"$1}'  ../../49_RenameChromosomes/chromosome.map >NEW2OLDchromosome.map
-ml maker
-singularity shell "/opt/rit/singularity/images/maker/2.31.10_3.1/maker.simg"
-map_data_ids NEW2OLDchromosome.map5599999000000000000000000000000000055.//////////////////////////////////////////0005 OrderedSCNGenePredictions.gff3
-mv B PK.gff3 OldNamesOrderedSCNGenePredictions.gff3
-```
-
-### Run featurecounts on bam files with gffs that contain new names.
-```
-for f in *bam; do echo "ml subread; featureCounts -T 16 -M-p -t gene -s 2 -g ID -a OldNamesOrderedSCNGenePredictions.gff3  -o "${f%.*}"_GeneCounts.txt " $f"; done
+for f in ../../38_Expression/01_AllExpressionDatasetsSeparate/*Gene_counts_genes.txt; do ln -s $f;done
+#this is the one that didnt trim correctly, modifying the name to prevent downstream bugs
+unlink 1703FL-02-01_S1_L001_R1_001.fastqGene_counts_genes.txt
+ln -s ../../38_Expression/01_AllExpressionDatasetsSeparate/1703FL-02-01_S1_L001_R1_001.fastqGene_counts_genes.txt 1703FL-02-01_S1_L001_R1_001_val_1.fqGene_counts_genes.txt
 ```
 
 
@@ -33,16 +18,16 @@ for f in *bam; do echo "ml subread; featureCounts -T 16 -M-p -t gene -s 2 -g ID 
 #/work/GIF/remkv6/Baum/04_Dovetail2Restart/39_DifferentialExpression/01_Genes
 
 #creates the command below
-ls -1 *GeneCounts.txt |while read line; do echo "<(awk '{print \$1,\$7}' "$line")"; done |tr "\n" " " |sed 's/^/paste /g' |sed 's/$/ |less/g' |less
+ls -1 *Gene_counts_genes.txt |while read line; do echo "<(awk '{print \$1,\$7}' "$line")"; done |tr "\n" " " |sed 's/^/paste /g' |sed 's/$/ |less/g' |less
 
 #gets all the samples in the correct order
-paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fq_sorted_GeneCounts.txt)  |less
+paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fqGene_counts_genes.txt)  |less
 
 #creates the header to the deseq table
-paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fq_sorted_GeneCounts.txt)     |awk 'NR==2 {print $1,$14,$16,$18,$20,$22,$24,$26,$28,$30,"X"$2,"X"$4,"X"$6,"X"$8,"X"$10,"X"$12}' |tr " " "\t" |sed 's/_val_1\.fq_sorted.bam//g' >header.txt
+paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fqGene_counts_genes.txt)     |awk 'NR==2 {print $1,$14,$16,$18,$20,$22,$24,$26,$28,$30,"X"$2,"X"$4,"X"$6,"X"$8,"X"$10,"X"$12}' |tr " " "\t" |sed 's/_val_1\.fq_sorted.bam//g' >header.txt
 
 Creates all the counts for the deseq table
-paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fq_sorted_GeneCounts.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fq_sorted_GeneCounts.txt)   |awk 'NR>2 {print $1,$14,$16,$18,$20,$22,$24,$26,$28,$30,$2,$4,$6,$8,$10,$12}' |tr " " "\t" >tailer.txt
+paste <(awk '{print $1,$7}' 1703FL-02-01_S1_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703FL-02-02_S2_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703FL-02-03_S3_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703FL-02-04_S4_L001_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703-TM101_S0_L003_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' 1703-TM102_S0_L003_R1_001_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230579_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230580_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230581_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230582_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230583_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230584_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230585_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230586_1_val_1.fqGene_counts_genes.txt) <(awk '{print $1,$7}' SRR6230587_1_val_1.fqGene_counts_genes.txt)     |awk 'NR>2 {print $1,$14,$16,$18,$20,$22,$24,$26,$28,$30,$2,$4,$6,$8,$10,$12}' |tr " " "\t" >tailer.txt
 
 cat header.txt tailer.txt >DeseqTable.txt
 
@@ -86,7 +71,8 @@ ml r-deseq2/1.20.0-py2-r3.5-openmpi3-zhebatp
  >  table(res$padj<0.05)
 
  FALSE  TRUE
-  7230  6459
+ 10398  6723
+
 
 
 
@@ -99,8 +85,8 @@ ml r-deseq2/1.20.0-py2-r3.5-openmpi3-zhebatp
   print(p)
   q()
 
-  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<6460 && NR>1 && $3<0{print $1"\t"$3}' >AllGlandvsAllWholeWormListDown.tab
-  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<6460 && NR>1 && $3>0{print $1"\t"$3}' >AllGlandvsAllWholeWormListUp.tab
+  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<6725 && NR>1 && $3<0{print $1"\t"$3}' >AllGlandvsAllWholeWormListDown.tab
+  less AllGlandvsAllWholeWorm |sed 's/,/\t/g' |awk 'NR<6725 && NR>1 && $3>0{print $1"\t"$3}' >AllGlandvsAllWholeWormListUp.tab
 ```
 
 ### Compare MM10 GLAND AND PA3 Gland
@@ -137,15 +123,10 @@ less DeseqTable.txt |cut -f 1,11,12,13,14,15,16 |awk '{print $1,$2,$6,$7,$3,$4,$
  >  table(res$padj<0.05)
 
  FALSE  TRUE
-  8664   178
+ 11077   142
 
-
-
-
-
-
- less PA3GlandvsMM10Gland |sed 's/,/\t/g' |awk 'NR<179 && NR>1 && $3<0{print $1"\t"$3}' >PA3GlandvsMM10Gland_PA3UP.tab
- less PA3GlandvsMM10Gland |sed 's/,/\t/g' |awk 'NR<179 && NR>1 && $3>0{print $1"\t"$3}' >PA3GlandvsMM10Gland_MM10UP.tab
+ less PA3GlandvsMM10Gland |sed 's/,/\t/g' |awk 'NR<144 && NR>1 && $3<0{print $1"\t"$3}' >PA3GlandvsMM10Gland_PA3UP.tab
+ less PA3GlandvsMM10Gland |sed 's/,/\t/g' |awk 'NR<144 && NR>1 && $3>0{print $1"\t"$3}' >PA3GlandvsMM10Gland_MM10UP.tab
 
 ```
 
@@ -180,12 +161,13 @@ fitting model and testing
 > table(res$padj<0.05)
 
 FALSE  TRUE
- 8496  3970
+11014  4839
 
 
 
- less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<3971 && NR>1 && $3<0{print $1"\t"$3}' >pPA3CvsPA3GlandListDown.tab
- less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<3971 && NR>1 && $3>0{print $1"\t"$3}' >pPA3CvsPA3GlandListUp.tab
+
+ less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<4841 && NR>1 && $3<0{print $1"\t"$3}' >pPA3CvsPA3GlandListDown.tab
+ less pPA3CvsPA3Gland |sed 's/,/\t/g' |awk 'NR<4841 && NR>1 && $3>0{print $1"\t"$3}' >pPA3CvsPA3GlandListUp.tab
 
 ```
 
@@ -222,12 +204,13 @@ fitting model and testing
 > table(res$padj<0.05)
 
 FALSE  TRUE
- 8415   268
+11867   364
 
 
 
- less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<269 && NR>1 && $3<0{print $1"\t"$3}' >ppPA3vspPA3CListDown.tab
- less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<269 && NR>1 && $3>0{print $1"\t"$3}' >ppPA3vspPA3CListUp.tab
+
+ less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<366 && NR>1 && $3<0{print $1"\t"$3}' >ppPA3vspPA3CListDown.tab
+ less ppPA3vspPA3C |sed 's/,/\t/g' |awk 'NR<366 && NR>1 && $3>0{print $1"\t"$3}' >ppPA3vspPA3CListUp.tab
 ```
 
 ### Compare PA3 preparasitic J2 to parasitic J2 incompatible
@@ -255,17 +238,21 @@ estimating size factors
 estimating dispersions        
 gene-wise dispersion estimates
 mean-dispersion relationship  
+-- note: fitType='parametric', but the dispersion trend was not well captured by the
+   function: y = a/x + b, and a local regression fit was automatically substituted.
+   specify fitType='local' or 'mean' to avoid this message next time.
 final dispersion estimates    
 fitting model and testing     
 > res <- results(dds)         
 > table(res$padj<0.05)        
 
 FALSE  TRUE
-15654     1
+ 9800  7071
 
 
- less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<2 && NR>1 && $3<0{print $1"\t"$3}' >ppPA3vspPA3ICListDown.tab
- less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<2 && NR>1 && $3>0{print $1"\t"$3}' >ppPA3vspPA3ICListUp.tab
+
+ less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<7073 && NR>1 && $3<0{print $1"\t"$3}' >ppPA3vspPA3ICListDown.tab
+ less ppPA3vspPA3IC |sed 's/,/\t/g' |awk 'NR<7073 && NR>1 && $3>0{print $1"\t"$3}' >ppPA3vspPA3ICListUp.tab
 
 ```
 
@@ -300,14 +287,15 @@ fitting model and testing
 
 
 FALSE  TRUE
-10254    32
+ 8982  7565
 
 
 
 
 
-  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<33 && NR>1 && $3<0{print $1"\t"$3}' >pPA3CvspPA3ICListDown.tab
-  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<33 && NR>1 && $3>0{print $1"\t"$3}' >pPA3CvspPA3ICListUp.tab
+
+  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<7567 && NR>1 && $3<0{print $1"\t"$3}' >pPA3CvspPA3ICListDown.tab
+  less pPA3CvspPA3IC |sed 's/,/\t/g' |awk 'NR<7567 && NR>1 && $3>0{print $1"\t"$3}' >pPA3CvspPA3ICListUp.tab
 ```
 
 ### Compare 2 PA3 rep to 3 MM10 rep
@@ -335,12 +323,10 @@ less DeseqTable.txt |cut -f 1,11,12,13,14,15,16 |awk '{print $1,$6,$7,$3,$4,$5}'
 
 
  FALSE  TRUE
-  8460   446
+ 10401   567
 
-
-
- less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<447 && NR>1 && $3<0{print $1"\t"$3}' >2PA3vs3MM10GlandListDown.tab
- less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<447 && NR>1 && $3>0{print $1"\t"$3}' >2PA3vs3MM10GlandListUp.tab
+ less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<569 && NR>1 && $3<0{print $1"\t"$3}' >2PA3vs3MM10GlandListDown.tab
+ less 2PA3vs3MM10GlandGland |sed 's/,/\t/g' |awk 'NR<569 && NR>1 && $3>0{print $1"\t"$3}' >2PA3vs3MM10GlandListUp.tab
 
 
 ```
@@ -368,20 +354,22 @@ awk 'NR==1' 2PA3vs2MM10GlandDeseqTable.txt |tr "\t" "\n"|awk '{if(NR==1){print $
  write.csv(resdata, file="2PA3vs2MM10GlandGland",quote = FALSE,row.names = F)
 
  FALSE  TRUE
-  7838  1074
+  9947  1331
 
 
 
- less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<1075 && NR>1 && $3<0{print $1"\t"$3}' >2PA3vs2MM10GlandListDown.tab
- less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<1075 && NR>1 && $3>0{print $1"\t"$3}' >2PA3vs2MM10GlandListUp.tab
+
+ less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<1333 && NR>1 && $3<0{print $1"\t"$3}' >2PA3vs2MM10GlandListDown.tab
+ less 2PA3vs2MM10GlandGland |sed 's/,/\t/g' |awk 'NR<1333 && NR>1 && $3>0{print $1"\t"$3}' >2PA3vs2MM10GlandListUp.tab
 
 ```
 
 ### Create tables
 ```
 #/work/GIF/remkv6/Baum/04_Dovetail2Restart/39_DifferentialExpression/02_mRNA
+ln -s /work/GIF/remkv6/Baum/04_Dovetail2Restart/49_RenameChromosomes/01_Transfer2Box/OrderedSCNGenePredictions.gff3
 
-awk '$3=="gene"' ../../../38_Expression/01_AllExpressionDatasetsSeparate/mikado.loci.ancestral.gff3 |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |awk '{print $1"\tN/A"}' >AllgenesNA
+awk '$3=="gene"' OrderedSCNGenePredictions.gff3 |cut -f 9 |sed 's/ID=//g' |sed 's/;/\t/g' |awk '{print $1"\tN/A"}' >AllgenesNA
 
 for f in *tab; do cat $f AllgenesNA |sort -u -k1,1 >${f%.*}Allgenes.tab; done
 
