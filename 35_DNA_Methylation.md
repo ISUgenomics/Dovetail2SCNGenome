@@ -43,13 +43,11 @@ ml dafoam; ml smrttools/4.0; ipdSummary SCNgenome.AllSubreads_sorted.bam --refer
 
 #removed previous softlinks
 ln -s ../49_RenameChromosomes/01_Transfer2Box/SCNgenome.fasta
-ln -s ../30_ReadMapping/AllSubreads.fastq
-
-#bax.h5 list of subread files
-for f in  /work/GIF/archive1/Baum/091615_SCN/RawReads/*/Analysis_Results/*bax.h5; do ls $f;done >baxFile.list
 
 
-echo "ml dafoam; ml smrttools/4.0; blasr baxFile.list SCNgenome.fasta  --clipping soft --nproc 16; pbindex subreadsPBbam.bam; ipdSummary subreadsPBbam.bam --reference SCNgenome.fasta  --gff basemods.gff"
+for f in  /work/GIF/archive1/Baum/091615_SCN/RawReads/*/Analysis_Results/subreads.bam; do ls $f;done >bamFile.fofn
 
-#for some reason the --bam flag causes errors with the program thinking this is the input bam file.
+echo "ml dafoam;ml blasr/5.1; blasr bamFile.fofn SCNgenome.fasta  --nproc 16 --useQuality --bam --out subreadsPBbam.bam;ml smrttools/4.0; pbindex subreadsPBbam.bam; ipdSummary subreadsPBbam.bam --reference SCNgenome.fasta  --gff basemods.gff"
+
+
 ```
