@@ -148,5 +148,50 @@ samtools index ${bam%.*}_new.bam
 ### Remove duplicate reads
 ```
 
-for f in *bam; do echo "ml picard; ml jdk; java -jar $PICARD MarkDuplicates I="$f" O="${f%.*}"Dedup.bam M="${f%.*}"Dedup.metrics.txt REMOVE_SEQUENCING_DUPLICATES=true";done >dedup.sh
+for f in *bam; do echo "ml picard; ml jdk; java -jar /opt/rit/spack-app/linux-rhel7-x86_64/gcc-4.8.5/picard-2.17.0-ft5qztzntoymuxiqt3b6yi6uqcmgzmds/bin/picard.jar MarkDuplicates I="$f" O="${f%.*}"Dedup.bam M="${f%.*}"Dedup.metrics.txt REMOVE_SEQUENCING_DUPLICATES=true";done >dedup.sh
+```
+
+
+### Run freebayes
+```
+#/ptmp/GIF/remkv6/Baum/02_freebayes
+
+ml bioawk; bioawk -c fastx '{print $name, length($seq)}' ../SCNgenome.fasta >Genome_sorted_length.txt
+
+ml bedtools2; bedtools makewindows -w 100000 -g Genome_sorted_length.txt > Genome_sorted_100kb_coords.bed
+
+
+less /work/GIF/remkv6/Baum/04_Dovetail2Restart/43_FreeBayes/01_SplitGenome/Genome_sorted_100kb_coords.bed |awk '{print $1":"$2"-"$3}' >regions.txt
+
+
+less regions.txt|while read line; do echo "ml miniconda3; source activate freebayes; freebayes -f SCNgenome.fasta
+ebayesSplit.sh
+
+cp ~/common_scripts/makeSLURMs.py
+
+#modify to only access one processor
+vi makeSLURMs.py
+
+sed '0~30 s/$/\nsleep 15s/g' freebayesSplit.sh |less
+
+(freebayes) [remkv6@condo007 02_freebayes]$
+(freebayes) [remkv6@condo007 02_freebayes]$ python makeSLURMs.py 1 freebayesSplit.sh
+
+
+
+
+
+
+
+bedtools getfasta -fi SCNgenome.fasta -bed Genome_sorted_100kb_coords.bed >SCNgenomeIntervals.fasta
+
+#create a split for all 100kb parts
+
+
+less regions.txt|while read line; do echo "ml miniconda3; source activate freebayes; freebayes -f SCNgenome.fasta -r "$line" -L bam.list >"${line%%.*}".vcf";done
+
+
+
+
+
 ```

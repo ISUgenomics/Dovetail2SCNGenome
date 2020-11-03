@@ -1,49 +1,12 @@
 # Signal peptide prediction
 
-### SignalP 5.0
+
+### Signalp 5.0 Rerun with all transcripts assembled.  
 ```
 wget https://services.healthtech.dtu.dk/download/66d87146-6d25-45b7-9bd9-62f21520bcbe/signalp-5.0b.Linux.tar.gz
 
 tar -zxvf signalp-5.0b.Linux.tar.gz
 cd signalp-5.0b/bin/
-
-ln -s /work/GIF/remkv6/Baum/04_Dovetail2Restart/25_AnnotateGenes/07_NewGenes/OrderedSCNGenePredictionsVHEJ_proteins.fasta
-
-./signalp -fasta OrderedSCNGenePredictionsVHEJ_proteins.fasta -gff3
-less OrderedSCNGenePredictionsVHEJ_proteins_summary.signalp5 |grep -v "#" |awk '{print $1,$3}' |tr " " "\t" >SignalP5.tab
-
-### how many??
-less OrderedSCNGenePredictionsVHEJ_proteins_summary.signalp5 |grep -v "#" |awk '{print $1,$3}' |tr " " "\t" |awk '$2>.6' |wc
-   3437    6874   64432
-[remkv6@condo042 bin]$ less OrderedSCNGenePredictionsVHEJ_proteins_summary.signalp5 |grep -v "#" |awk '{print $1,$3}' |tr " " "\t" |awk '$2>.5' |wc
-   3714    7428   69635
-[remkv6@condo042 bin]$ less OrderedSCNGenePredictionsVHEJ_proteins_summary.signalp5 |grep -v "#" |awk '{print $1,$3}' |tr " " "\t" |awk '$2>.8' |wc
-   2841    5682   53265
-[remkv6@condo042 bin]$ less OrderedSCNGenePredictionsVHEJ_proteins_summary.signalp5 |grep -v "#" |awk '{print $1,$3}' |tr " " "\t" |awk '$2>.9' |wc
-   2353    4706   44102
-
-```
-
-#### SignalP 4.1
-
-```
-#/work/GIF/remkv6/Baum/04_Dovetail2Restart/32_SignalP
- ln -s ../47_MikadoFinalize/mikado.loci.ancestralVHEJ_proteins.fasta
-
-ml signalp/4.1f-py2-binsfdx
-
-fasta-splitter.pl --n-parts 100 mikado.loci.ancestralVHEJ_proteins.fasta
-for f in *part* ; do signalp -f short $f > ${f}.signalP4.out; done
-
- cat *signalP4.out |grep -v "#" |awk '{print $1"\t"$9}' >mikado.loci.ancestralVHEJ_proteinsSignalP4.tab
-
- awk '$2>.6' mikado.loci.ancestralVHEJ_proteinsSignalP4.tab |wc
-    2317    4634   71334
-```
-
-### Signalp 5.0 Rerun with all transcripts assembled.  
-```
-
 
 ./signalp -fasta MergingTestSCNVHEJ_proteins.fasta -gff3
 
@@ -78,10 +41,84 @@ awk '$3=="mRNA"' ../../../../29_Effectors/SCNgenome.effector_sorted.gff|sort|uni
 ```
 
 
-### SignalP 3.0
+### SignalP 3.0 -- new gene names
+
+```
+#/work/gif/remkv6/Baum/04_DovetailSCNGenome/32_SignalP/01_SignalP3.1/signalp-3.0
+
+#downloaded and extracted signalp 3.0
+
+vi signalp
+#modified AWK= , SIGNALP= , and HOW=
+# Full path to the SignalP 3.0 software (MUST BE SET!):
+SIGNALP=/work/gif/remkv6/Baum/04_DovetailSCNGenome/32_SignalP/01_SignalP3.1/signalp-3.0
+
+# Other programs (assumed to be in the path)
+# mandatory
+SH=/bin/sh                              # POSIX-compliant shell
+AWK=/usr/bin/gawk                               # nawk, gawk, or equivalent
+PASTE=paste
+# optional
+PLOTTER=gnuplot                         # needed only for graphics
+PPMTOGIF=ppmtogif                       # needed only for graphics
+SIGNALPDISP="ghostview -landscape"      # needed only for graphics
+
+#modified where the program finds HOW by adding ../
+HOW=$SIGNALP/../how/how_$SYSTEM
+
+#split the protein fasta into 8 parts
+fasta-splitter.pl --n-parts 8 /work/gif/remkv6/Baum/04_DovetailSCNGenome/49_RenameChromosomes/mikado.loci.ancestralVHEJ_proteins.fasta
+
+#create the run scripts
+for f in *fasta; do echo "/work/gif/remkv6/Baum/04_DovetailSCNGenome/32_SignalP/01_SignalP3.1/signalp-3.0/signalp -t euk "$f" >"${f%.*}".out";done >signalp3.sh
+
+
+paste <(cat *out |grep "Prediction:" -B 1 |grep ">") <(cat *out |grep "Max cleavage"  ) <(cat *out |grep "Signal peptide probability" ) |sort -k1,1V |paste - <(sort -k1,1V ProteinLengths.txt) |awk '$15>.499999' |awk '{print "samtools faidx mikado.loci.ancestralVHEJ_proteins.fasta "$1":"$11"-"$17" >>SignalPeptidesSubtracted.fasta"}' |sed 's/>Het/Het/g' >ExtractSignalPContainingProts.sh
+sh ExtractSignalPContainingProts.sh
 
 ```
 
-less mikado.loci.ancestralVHEJ_proteins.part-01.signalp3.out |grep ">" -A 4 |grep "cleavage" -B 4 |grep -v "\-\-" |tr "\n" "\t" |sed 's/>/\n/g' |awk '{print $1,$8,$20}'|less
+
+### Signalp 4.1 -- new gene names
+
+```
+#/work/gif/remkv6/Baum/04_DovetailSCNGenome/32_SignalP/03_Signalp4.1
+
+#split the protein fasta into 8 parts
+fasta-splitter.pl --n-parts 8 /work/gif/remkv6/Baum/04_DovetailSCNGenome/49_RenameChromosomes/mikado.loci.ancestralVHEJ_proteins.fasta
+
+
+[remkv6@nova038 03_Signalp4.1]$ for f in *part* ; do echo "ml signalp;signalp -f short "$f" > "${f%.*}".signalP4.out"; done >signalp4.sh
+
+```
+
+### Signalp 5.0 -- final gene names
+```
+#/work/gif/remkv6/Baum/04_DovetailSCNGenome/32_SignalP/02_SignalP5/signalp-5.0b/bin
+
+fasta-splitter.pl --n-parts 8 /work/gif/remkv6/Baum/04_DovetailSCNGenome/49_RenameChromosomes/mikado.loci.ancestralVHEJ_proteins.fasta
+
+for f in ../*fasta;do echo "./signalp -fasta "$f" -gff3"; done >signalp5.sh
+python ~/common_scripts/makeSLURMs.py 1 signalp5.sh
+sed -i 's/=36/=2/g' *sub
+for f in *sub; do sbatch $f;done
+
+
+
+ln -s /work/gif/remkv6/Baum/04_DovetailSCNGenome/49_RenameChromosomes/mikado.loci.ancestralVHEJ_proteins.fasta
+bioawk -c fastx '{print $name,length($seq)}' /work/gif/remkv6/Baum/04_DovetailSCNGenome/49_RenameChromosomes/mikado.loci.ancestralVHEJ_proteins.fasta >ProteinLengths.txt
+
+
+ml samtools
+samtools faidx mikado.loci.ancestralVHEJ_proteins.fasta
+
+cat *signalp5 |grep -v "#" |sort -k1,1nr |paste - <(sort -k1,1nr ProteinLengths.txt)  |awk '$3>.4999999' |awk '{print $1,$7,$12}' |sed 's/-/ /g' |sed 's/\./\t/2' |awk '{print "samtools faidx mikado.loci.ancestralVHEJ_proteins.fasta "$1":"$3"-"$4 " >>SignalPeptidesSubtracted.fasta"}' >ExtractSignalPContainingProts.sh
+sh ExtractSignalPContainingProts.sh
+
+cat *out |grep -v "#" |sort -k1,1V |paste - <(sort -k1,1V ProteinLengths.txt ) |awk '$9>.499999 {print "samtools faidx mikado.loci.ancestralVHEJ_proteins.fasta "$1":"$5"-"$14" >>SignalPeptidesSubtracted.fasta"}' >ExtractSignalPContainingProts.sh
+
+sh ExtractSignalPContainingProts.sh
+
+
 
 ```
