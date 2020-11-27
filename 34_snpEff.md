@@ -64,7 +64,15 @@ cat <(grep -v "#" ../../../../49_RenameChromosomes/01_Transfer2Box/OrderedSCNGen
  snpEff build -gff3 Hetgly
 ```
 
-### Run SNPEff
+#### Split the vcf file by sample
+```
+
+ echo "ml bcftools; ml vcftools; ml parallel; bcftools query -l SNPsPASS.vcf.recode.vcf |parallel -j 16 'vcf-subset --exclude-ref -c {} SNPsPASS.vcf.recode.vcf > {}.vcf'" >SplitSampleVCF.sh
+```
+
+
+
+### Run SNPEff -- set for single sample below, outdated
 ```
 #/work/GIF/remkv6/Baum/04_Dovetail2Restart/43_FreeBayes/01_SNPEFF
 
