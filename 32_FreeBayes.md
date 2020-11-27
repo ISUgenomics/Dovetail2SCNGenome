@@ -190,8 +190,12 @@ bedtools getfasta -fi SCNgenome.fasta -bed Genome_sorted_100kb_coords.bed >SCNge
 
 less regions.txt|while read line; do echo "ml miniconda3; source activate freebayes; freebayes -f SCNgenome.fasta -r "$line" -L bam.list >"${line%%.*}".vcf";done
 
+```
 
 
 
+Merge the split vcf files and filter
+```
+ echo " ml bcftools; bcftools concat -O v -o mergedAllSNPs.vcf --threads 15 -f VCF.list "  >VCFMERGE.sh
 
 ```

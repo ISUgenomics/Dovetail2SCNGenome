@@ -119,6 +119,29 @@ cat *out |grep -v "#" |sort -k1,1V |paste - <(sort -k1,1V ProteinLengths.txt ) |
 
 sh ExtractSignalPContainingProts.sh
 
+```
 
 
+### Run tmhmm on proteins with signal peptide
+```
+#/work/gif/remkv6/Baum/04_DovetailSCNGenome/32_SignalP/04_tmhmm
+
+#install tmhmm
+
+wget https://services.healthtech.dtu.dk/download/160bac04-b84c-4d43-b86b-06a52c951393/tmhmm-2.0c.Linux.tar.gz
+tar -zxvf tmhmm-2.0c.Linux.tar.gz
+
+had to change path of perl at the top of tmhmm and tmhmmformat.pl to the path of my perl.  Then added the folder to my path.  
+
+#softlinks that were made
+Signalp3SignalPeptidesSubtracted.fasta -> ../01_SignalP3.1/signalp-3.0/SignalPeptidesSubtracted.fasta
+Signalp5SignalPeptidesSubtracted.fasta -> ../02_SignalP5/signalp-5.0b/bin/SignalPeptidesSubtracted.fasta
+Signalp4SignalPeptidesSubtracted.fasta -> ../03_Signalp4.1/SignalPeptidesSubtracted.fasta
+
+
+tmhmm Signalp5SignalPeptidesSubtracted.fasta > Signalp5SignalPeptidesSubtractedtmhmm.out
+tmhmm Signalp4SignalPeptidesSubtracted.fasta > Signalp4SignalPeptidesSubtractedtmhmm.out
+tmhmm Signalp3SignalPeptidesSubtracted.fasta > Signalp3SignalPeptidesSubtractedtmhmm.out
+
+for f in *out; do grep "Number" $f|sed 's/:/ /1' |awk '{print $2"\t"$8}' >${f%.*}.tab; done
 ```
