@@ -10,7 +10,7 @@ orthofinder -t 12 -f 01_Orthofinder/ -n OrthofinderTylenchida
 OrthoFinder assigned 137810 genes (80.5% of total) to 13399 orthogroups. Fifty percent of all genes were in orthogroups with 11 or more genes (G50 was 11) and were contained in the largest 3928 orthogroups (O50 was 3928). There were 3050 orthogroups with all species present and 208 of these consisted entirely of single-copy genes.
 # This is kind of a neat stat: 208 are conserved at single copy across all 8 species. So these must be the genes that are dosage sensitive, because they are found at single copy in allopolyploid Meloidogyne incognita.
 ```
-### Indepth look at the gene familes
+### An in-depth look at the gene familes
 ```
 
 
