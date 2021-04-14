@@ -1,41 +1,5 @@
 ## Compare output with existing annotations
-### Schachtii gene call stats
-```
-#gene length
-less ../../../12_SchachtiiSynteny/H_sch_gene_calls_v1_CP.gff |awk '$3=="gene"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
-Total:  78,025,824
-Count:  26,739
-Mean:   2,918
-Median: 2,129
-Min:    252
-Max:    56,948
 
-#CDS length
-(mikado) [remkv6@condofree032 02_Round02]$ less ../../../12_SchachtiiSynteny/H_sch_gene_calls_v1_CP.gff |awk '$3=="CDS"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
-Total:  36,075,582
-Count:  222,897
-Mean:   161
-Median: 125
-Min:    1
-Max:    13,080
-
-#transcript length
-less ../../../12_SchachtiiSynteny/H_sch_gene_calls_v1_CP.gff |awk '$3=="transcript"' |grep -v "#"|awk '{if($4>$5){print $4-$5} else {print $5-$4}}' |summary.sh
-Total:  101,553,992
-Count:  32,624
-Mean:   3,112
-Median: 2,275
-Min:    252
-Max:    56,948
-
-#exons per transcript
-less ../../../12_SchachtiiSynteny/H_sch_gene_calls_v1_CP.gff |awk '$3=="CDS" ' |cut -f 9 |awk '{print $1}' |sort |uniq -c |awk '{print $1}' |summary.sh
-Total:  222,897
-Count:  32,624
-Mean:   6
-Median: 5
-Min:    1
-Max:    113
 
 
 ```
