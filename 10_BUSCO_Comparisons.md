@@ -1,3 +1,5 @@
+# BUSCO 3.0 runs of every pre assembly superceded by busco 5.12 runs in 35 and 35.md files. 
+
 #need some comparisons of busco for PAG 2019 between the four assemblies.
 
 
@@ -300,6 +302,8 @@ cat missing_busco_list_PseudoBUSCOmikadoCufflinksFinal.tsv ../../05_pseudomolecu
 So to get the complete total, 646 for protein mode, 634 for genome mode.  179 were missing in both datasets.  115 of these 179 were found with a manual blast using an evalue cutoff of.01 and a length cutoff of '$1<1.6 && $1>.4'.
 
 Total complete with manual blast == 982-(179-115) =918 == 918/982 == .9348
+/work/gif/remkv6/Baum/04_DovetailSCNGenome/01_CondoPorts/09_BuscoComparison/06_BuscoPseudomoleculeProteins/run_PseudoBUSCOmikadoCufflinksFinal
+
 Total complete with just busco genome +protein mode scores == 982-179 = 803 complete or 803/982 == .8177
 So the current SCN genome has a complete score from busco only at 81.8%, but manual investigation reveals that this total is at 93.5%.
 ```
