@@ -57,6 +57,19 @@ Average length of break (>25 Ns) between contigs in scaffold          0
                                            contig %non-ACGTN       0.00
                                Number of contig non-ACGTN nt          0
 
+
+                               --------------------------------------------------
+                               |Results from dataset nematoda_odb10              |
+                               --------------------------------------------------
+                               |C:52.8%[S:46.6%,D:6.2%],F:2.3%,M:44.9%,n:3131    |
+                               |1653   Complete BUSCOs (C)                       |
+                               |1460   Complete and single-copy BUSCOs (S)       |
+                               |193    Complete and duplicated BUSCOs (D)        |
+                               |73     Fragmented BUSCOs (F)                     |
+                               |1405   Missing BUSCOs (M)                        |
+                               |3131   Total BUSCO groups searched               |
+                               --------------------------------------------------
+
 ```
 
 ### Falcon Unzip
@@ -117,6 +130,19 @@ Average length of break (>25 Ns) between contigs in scaffold          0
                                                    contig %N       0.00
                                            contig %non-ACGTN       0.00
                                Number of contig non-ACGTN nt          0
+
+                               --------------------------------------------------
+                               |Results from dataset nematoda_odb10              |
+                               --------------------------------------------------
+                               |C:52.2%[S:46.7%,D:5.5%],F:2.5%,M:45.3%,n:3131    |
+                               |1634   Complete BUSCOs (C)                       |
+                               |1461   Complete and single-copy BUSCOs (S)       |
+                               |173    Complete and duplicated BUSCOs (D)        |
+                               |77     Fragmented BUSCOs (F)                     |
+                               |1420   Missing BUSCOs (M)                        |
+                               |3131   Total BUSCO groups searched               |
+                               --------------------------------------------------
+
 
 ```
 
@@ -182,14 +208,15 @@ Average length of break (>25 Ns) between contigs in scaffold        100
                                --------------------------------------------------
                                 |Results from dataset nematoda_odb10              |
                                 --------------------------------------------------
-                                |C:43.6%[S:40.3%,D:3.3%],F:3.6%,M:52.8%,n:3131    |
-                                |1364   Complete BUSCOs (C)                       |
-                                |1261   Complete and single-copy BUSCOs (S)       |
-                                |103    Complete and duplicated BUSCOs (D)        |
-                                |114    Fragmented BUSCOs (F)                     |
-                                |1653   Missing BUSCOs (M)                        |
+                                |C:52.1%[S:48.1%,D:4.0%],F:2.2%,M:45.7%,n:3131    |
+                                |1632   Complete BUSCOs (C)                       |
+                                |1507   Complete and single-copy BUSCOs (S)       |
+                                |125    Complete and duplicated BUSCOs (D)        |
+                                |70     Fragmented BUSCOs (F)                     |
+                                |1429   Missing BUSCOs (M)                        |
                                 |3131   Total BUSCO groups searched               |
                                 --------------------------------------------------
+
 
 ```
 
@@ -306,16 +333,18 @@ Average length of break (>25 Ns) between contigs in scaffold        387
                                Number of contig non-ACGTN nt          0
 
                                --------------------------------------------------
-|Results from dataset nematoda_odb10              |
---------------------------------------------------
-|C:43.6%[S:40.3%,D:3.3%],F:3.6%,M:52.8%,n:3131    |
-|1364   Complete BUSCOs (C)                       |
-|1262   Complete and single-copy BUSCOs (S)       |
-|102    Complete and duplicated BUSCOs (D)        |
-|114    Fragmented BUSCOs (F)                     |
-|1653   Missing BUSCOs (M)                        |
-|3131   Total BUSCO groups searched               |
---------------------------------------------------
+                               --------------------------------------------------
+                                   |Results from dataset nematoda_odb10              |
+                                   --------------------------------------------------
+                                   |C:52.1%[S:48.4%,D:3.7%],F:2.2%,M:45.7%,n:3131    |
+                                   |1631   Complete BUSCOs (C)                       |
+                                   |1516   Complete and single-copy BUSCOs (S)       |
+                                   |115    Complete and duplicated BUSCOs (D)        |
+                                   |70     Fragmented BUSCOs (F)                     |
+                                   |1430   Missing BUSCOs (M)                        |
+                                   |3131   Total BUSCO groups searched               |
+                                   --------------------------------------------------
+
 
 ```
 
@@ -378,13 +407,18 @@ Average length of break (>25 Ns) between contigs in scaffold        502
                                            contig %non-ACGTN       0.00
                                Number of contig non-ACGTN nt          0
 
-                               C:37.0%[S:34.0%,D:3.0%],F:4.5%,M:58.5%,n:3131
-                                      1159    Complete BUSCOs (C)
-                                      1064    Complete and single-copy BUSCOs (S)
-                                      95      Complete and duplicated BUSCOs (D)
-                                      141     Fragmented BUSCOs (F)
-                                      1831    Missing BUSCOs (M)
-                                      3131    Total BUSCO groups searched
+                               --------------------------------------------------
+                               |Results from dataset nematoda_odb10              |
+                               --------------------------------------------------
+                               |C:56.0%[S:51.9%,D:4.1%],F:2.1%,M:41.9%,n:3131    |
+                               |1754   Complete BUSCOs (C)                       |
+                               |1626   Complete and single-copy BUSCOs (S)       |
+                               |128    Complete and duplicated BUSCOs (D)        |
+                               |66     Fragmented BUSCOs (F)                     |
+                               |1311   Missing BUSCOs (M)                        |
+                               |3131   Total BUSCO groups searched               |
+                               --------------------------------------------------
+
 
 ```
 
@@ -450,14 +484,15 @@ Average length of break (>25 Ns) between contigs in scaffold        756
                                --------------------------------------------------
                                |Results from dataset nematoda_odb10              |
                                --------------------------------------------------
-                               |C:44.2%[S:41.0%,D:3.2%],F:3.6%,M:52.2%,n:3131    |
-                               |1383   Complete BUSCOs (C)                       |
-                               |1284   Complete and single-copy BUSCOs (S)       |
-                               |99     Complete and duplicated BUSCOs (D)        |
-                               |114    Fragmented BUSCOs (F)                     |
-                               |1634   Missing BUSCOs (M)                        |
+                               |C:54.5%[S:51.3%,D:3.2%],F:2.5%,M:43.0%,n:3131    |
+                               |1706   Complete BUSCOs (C)                       |
+                               |1606   Complete and single-copy BUSCOs (S)       |
+                               |100    Complete and duplicated BUSCOs (D)        |
+                               |78     Fragmented BUSCOs (F)                     |
+                               |1347   Missing BUSCOs (M)                        |
                                |3131   Total BUSCO groups searched               |
                                --------------------------------------------------
+
 cd                               
 ```
 
@@ -523,14 +558,16 @@ Average length of break (>25 Ns) between contigs in scaffold        782
                                --------------------------------------------------
                                 |Results from dataset nematoda_odb10              |
                                 --------------------------------------------------
-                                |C:44.7%[S:41.3%,D:3.4%],F:3.5%,M:51.8%,n:3131    |
-                                |1400   Complete BUSCOs (C)                       |
-                                |1293   Complete and single-copy BUSCOs (S)       |
-                                |107    Complete and duplicated BUSCOs (D)        |
-                                |110    Fragmented BUSCOs (F)                     |
-                                |1621   Missing BUSCOs (M)                        |
+                                |C:55.3%[S:52.1%,D:3.2%],F:2.3%,M:42.4%,n:3131    |
+                                |1733   Complete BUSCOs (C)                       |
+                                |1632   Complete and single-copy BUSCOs (S)       |
+                                |101    Complete and duplicated BUSCOs (D)        |
+                                |73     Fragmented BUSCOs (F)                     |
+                                |1325   Missing BUSCOs (M)                        |
                                 |3131   Total BUSCO groups searched               |
                                 --------------------------------------------------
+
+
 
 ```
 
@@ -596,17 +633,19 @@ Average length of break (>25 Ns) between contigs in scaffold        791
                                Number of contig non-ACGTN nt          0
 
 
-                                       --------------------------------------------------
-                                       |Results from dataset nematoda_odb10              |
-                                       --------------------------------------------------
-                                       |C:44.5%[S:41.1%,D:3.4%],F:3.4%,M:52.1%,n:3131    |
-                                       |1394   Complete BUSCOs (C)                       |
-                                       |1287   Complete and single-copy BUSCOs (S)       |
-                                       |107    Complete and duplicated BUSCOs (D)        |
-                                       |108    Fragmented BUSCOs (F)                     |
-                                       |1629   Missing BUSCOs (M)                        |
-                                       |3131   Total BUSCO groups searched               |
-                                       --------------------------------------------------                               
+
+        --------------------------------------------------
+        |Results from dataset nematoda_odb10              |
+        --------------------------------------------------
+        |C:54.9%[S:51.7%,D:3.2%],F:2.3%,M:42.8%,n:3131    |
+        |1717   Complete BUSCOs (C)                       |
+        |1618   Complete and single-copy BUSCOs (S)       |
+        |99     Complete and duplicated BUSCOs (D)        |
+        |73     Fragmented BUSCOs (F)                     |
+        |1341   Missing BUSCOs (M)                        |
+        |3131   Total BUSCO groups searched               |
+        --------------------------------------------------
+
 ```
 
 ### Last round of pilon with short reads
@@ -670,14 +709,16 @@ Average length of break (>25 Ns) between contigs in scaffold        797
                                --------------------------------------------------
                                |Results from dataset nematoda_odb10              |
                                --------------------------------------------------
-                               |C:44.7%[S:41.2%,D:3.5%],F:3.5%,M:51.8%,n:3131    |
-                               |1400   Complete BUSCOs (C)                       |
-                               |1291   Complete and single-copy BUSCOs (S)       |
-                               |109    Complete and duplicated BUSCOs (D)        |
-                               |109    Fragmented BUSCOs (F)                     |
-                               |1622   Missing BUSCOs (M)                        |
+                               |C:55.6%[S:52.5%,D:3.1%],F:2.3%,M:42.1%,n:3131    |
+                               |1740   Complete BUSCOs (C)                       |
+                               |1644   Complete and single-copy BUSCOs (S)       |
+                               |96     Complete and duplicated BUSCOs (D)        |
+                               |72     Fragmented BUSCOs (F)                     |
+                               |1319   Missing BUSCOs (M)                        |
                                |3131   Total BUSCO groups searched               |
                                --------------------------------------------------
+
+
 
 
 ```

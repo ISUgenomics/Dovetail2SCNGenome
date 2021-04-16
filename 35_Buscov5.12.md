@@ -18,6 +18,7 @@ echo "ml miniconda3; source activate busco5_env ; busco -i genome738sl.polished.
         |255    Total BUSCO groups searched               |
         --------------------------------------------------
 
+#run with --long and --augustus
         --------------------------------------------------
         |Results from dataset nematoda_odb10              |
         --------------------------------------------------
@@ -36,7 +37,7 @@ cat 738BuscoLong/run_nematoda_odb10/missing_busco_list.tsv 01_proteins/738Buscop
     940    1902   17993
 
 
-#new value
+
 
 ```
 
@@ -70,10 +71,10 @@ echo "ml miniconda3; source activate busco5_env ; busco -i finalaugustus.pep_.fa
 --------------------------------------------------
 
 #What percentage would be considered complete if we eliminate the 688 busco genes missing from all species from the total
-3131-688= 2453
-956-688 = 268
+3131-666= 2465
+940-666 = 274
 
-#Total percent complete (2453- 268 = 2195)/2453 = 89.1% not missing
+#Total percent complete (2465- 274 = 2191)/2465 = 88.9% not missing
 ```
 
 ### TN10 Pseudo genome
@@ -93,7 +94,7 @@ echo "ml miniconda3; source activate busco5_env ; busco -i SCNgenome.fasta -o TN
         |46     Missing BUSCOs (M)                        |
         |255    Total BUSCO groups searched               |
         --------------------------------------------------
-
+#run with --long and --augustus
         --------------------------------------------------
         |Results from dataset nematoda_odb10              |
         --------------------------------------------------
@@ -113,7 +114,7 @@ cat TN10BuscogenoLong/run_nematoda_odb10/missing_busco_list.tsv 01_protein/TN10P
     965
 
 
-#new value
+
 
 ```
 ### TN10 Pseudo protein
@@ -159,17 +160,12 @@ echo "ml miniconda3; source activate busco5_env ; busco -i mikado.loci.ancestral
 --------------------------------------------------
 
 #What percentage would be considered complete if we eliminate the 688 busco genes missing from all species from the total
-3131-688= 2453
-1010-688 =322
+3131-666= 2465
+965-666 =299
 
-#Total percent complete (2453- 322=2131)/2453 = 86.9% not missing
+#Total percent complete (2465 - 299=2166)/2465 = 87.9% not missing
 
 
-#What if the 824 genes missing from all three assemblies are biologically not there
-3131-824= 2307
-1010-824= 186
-
-(2307-186)/2307=91.94%
 ```
 ### X12 genome
 ```
@@ -187,7 +183,7 @@ echo "ml miniconda3; source activate busco5_env ; busco -i X12SCN_genome.fa -o X
 |65     Missing BUSCOs (M)                        |
 |255    Total BUSCO groups searched               |
 --------------------------------------------------
-
+#run with --long and --augustus
 --------------------------------------------------
 |Results from dataset nematoda_odb10              |
 --------------------------------------------------
@@ -224,7 +220,6 @@ echo "ml miniconda3; source activate busco5_env ; busco -i pasa2.longest.filter.
         |55     Missing BUSCOs (M)                        |
         |255    Total BUSCO groups searched               |
         --------------------------------------------------
-
         --------------------------------------------------
         |Results from dataset nematoda_odb10              |
         --------------------------------------------------
@@ -237,10 +232,10 @@ echo "ml miniconda3; source activate busco5_env ; busco -i pasa2.longest.filter.
         |3131   Total BUSCO groups searched               |
         --------------------------------------------------
 #What percentage would be considered complete if we eliminate the 688 busco genes missing from all species from the total
-3131-688= 2453
-1202-688 = 514
+3131-666= 2465
+1142-666 = 476
 
-#Total percent complete (2453- 514=1939)/2453 = 79.0% not missing
+#Total percent complete (2465-476=1989)/2465 = 80.7% not missing
 ```
 ### Globodera pallida genome
 ```
@@ -259,6 +254,7 @@ echo "ml miniconda3; source activate busco5_env ; busco -i globodera_pallida.PRJ
         |75     Missing BUSCOs (M)                        |
         |255    Total BUSCO groups searched               |
         --------------------------------------------------
+#run with --long and --augustus
         --------------------------------------------------
         |Results from dataset nematoda_odb10              |
         --------------------------------------------------
@@ -308,11 +304,12 @@ echo "ml miniconda3; source activate busco5_env ; busco -i globodera_pallida.PRJ
         |3131   Total BUSCO groups searched               |
         --------------------------------------------------
 #What percentage would be considered complete if we eliminate the 688 busco genes missing from all species from the total
-3131-688
-1452-688 = 764
+3131-666 =2465
+1377-666 = 711
 
 
-#Total percent complete (2453- 764)/2453 = 68.9% not missing
+
+#Total percent complete (2465- 711=1754)/2465 = 71.2% not missing
 
 ```
 ### Globodera rostochiensis genome
@@ -331,7 +328,7 @@ echo "ml miniconda3; source activate busco5_env ; busco -i globodera_rostochiens
 |47     Missing BUSCOs (M)                        |
 |255    Total BUSCO groups searched               |
 --------------------------------------------------
-
+#run with --long and --augustus
 --------------------------------------------------
  |Results from dataset nematoda_odb10              |
  --------------------------------------------------
@@ -376,12 +373,12 @@ echo "ml miniconda3; source activate busco5_env ; busco -i globodera_rostochiens
 
 
 #What percentage would be considered complete if we eliminate the 688 busco genes missing from all species from the total
-3131-688
-915-688 = 227
+3131-666=2465
+881-666 = 215
 
 
 
-#Total percent complete (2453- 227)/2453 = 90.7% not missing
+#Total percent complete (2465- 215=2,250)/2465 = 91.3% not missing
 ```
 ### Globodera ellingtonae genome
 ```
@@ -399,22 +396,24 @@ echo "ml miniconda3; source activate busco5_env ; busco -i globodera_ellingtonae
 |56     Missing BUSCOs (M)                        |
 |255    Total BUSCO groups searched               |
 --------------------------------------------------
-
+#run with --long and --augustus
 --------------------------------------------------
 |Results from dataset nematoda_odb10              |
 --------------------------------------------------
-|C:42.8%[S:41.5%,D:1.3%],F:4.8%,M:52.4%,n:3131    |
-|1339   Complete BUSCOs (C)                       |
-|1298   Complete and single-copy BUSCOs (S)       |
-|41     Complete and duplicated BUSCOs (D)        |
-|150    Fragmented BUSCOs (F)                     |
-|1642   Missing BUSCOs (M)                        |
+|C:54.4%[S:52.8%,D:1.6%],F:2.4%,M:43.2%,n:3131    |
+|1701   Complete BUSCOs (C)                       |
+|1652   Complete and single-copy BUSCOs (S)       |
+|49     Complete and duplicated BUSCOs (D)        |
+|74     Fragmented BUSCOs (F)                     |
+|1356   Missing BUSCOs (M)                        |
 |3131   Total BUSCO groups searched               |
 --------------------------------------------------
 
+
 #How many are actually missing from nematoda odb10 using both protein and genome datasets
-cat */run_nematoda_odb10/missing_busco_list.tsv 01_protein/*/run_nematoda_odb10/missing_busco_list.tsv |sort|uniq -c |awk '$1==2' |wc
-    966    1954   18497
+cat GellBuscogenoLong/run_nematoda_odb10/missing_busco_list.tsv 01_protein/*/run_nematoda_odb10/missing_busco_list.tsv |sort|uniq -c |awk '$1==2' |wc
+    947    1916   18137
+
 
 
 ```
@@ -441,12 +440,12 @@ eukaryota_odb10 -- C:87.9%[S:80.4%,D:7.5%],F:5.9%,M:6.2%,n:255
 --------------------------------------------------
 
 #What percentage would be considered complete if we eliminate the 688 busco genes missing from all species from the total
-3131-688
-966-688 = 278
+3131-666=2465
+947-666 = 281
 
 
 
-#Total percent complete (2453- 278)/2453 = 88.7% not missing
+#Total percent complete (2465- 281=2184)/2465 = 88.6% not missing
 
 
 
@@ -468,18 +467,19 @@ echo "ml miniconda3; source activate busco5_env ; busco -i meloidogyne_hapla.PRJ
 |46     Missing BUSCOs (M)                        |
 |255    Total BUSCO groups searched               |
 --------------------------------------------------
-
+#run with --long and --augustus
 --------------------------------------------------
 |Results from dataset nematoda_odb10              |
 --------------------------------------------------
-|C:45.4%[S:44.5%,D:0.9%],F:4.7%,M:49.9%,n:3131    |
-|1422   Complete BUSCOs (C)                       |
-|1394   Complete and single-copy BUSCOs (S)       |
-|28     Complete and duplicated BUSCOs (D)        |
-|147    Fragmented BUSCOs (F)                     |
-|1562   Missing BUSCOs (M)                        |
+|C:59.6%[S:58.5%,D:1.1%],F:2.2%,M:38.2%,n:3131    |
+|1866   Complete BUSCOs (C)                       |
+|1831   Complete and single-copy BUSCOs (S)       |
+|35     Complete and duplicated BUSCOs (D)        |
+|68     Fragmented BUSCOs (F)                     |
+|1197   Missing BUSCOs (M)                        |
 |3131   Total BUSCO groups searched               |
 --------------------------------------------------
+
 #How many are actually missing from nematoda odb10 using both protein and genome datasets
 
 cat MhapBuscogenoLong/run_nematoda_odb10/missing_busco_list.tsv 01_protein/*/run_nematoda_odb10/missing_busco_list.tsv |sort|uniq -c |awk '$1==2' |wc
@@ -530,10 +530,10 @@ echo "ml miniconda3; source activate busco5_env ; busco -i meloidogyne_hapla.PRJ
  --------------------------------------------------
 
   #What percentage would be considered complete if we eliminate the 688 busco genes missing from all species from the total
-  3131-688
-  1147-688 = 459
+  3131-666=2465
+  1050-666 = 384
 
-  #Total percent complete (2453- 459)/2453 = 81.3% not missing
+  #Total percent complete (2465- 384=2081)/2465 = 84.4% not missing
 ```
 ### Meloidogyne incognita genome
 ```
@@ -551,6 +551,8 @@ echo "ml miniconda3; source activate busco5_env ; busco -i meloidogyne_incognita
 |45     Missing BUSCOs (M)                        |
 |255    Total BUSCO groups searched               |
 --------------------------------------------------
+
+#run with --long and --augustus
 --------------------------------------------------
 |Results from dataset nematoda_odb10              |
 --------------------------------------------------
@@ -602,45 +604,49 @@ echo "ml miniconda3; source activate busco5_env ; busco -i meloidogyne_incognita
 --------------------------------------------------
 
 #What percentage would be considered complete if we eliminate the 688 busco genes missing from all species from the total
-3131-688
-914-688 = 226
+3131-666=2465
+889-666 = 223
 
-#Total percent complete (2453- 226)/2453 = 90.8% not missing
+#Total percent complete (2465- 223=2242)/2465 = 91.0% not missing
 ```
 
 ## Busco genes missing from whole clade.
 
 ```
 #How many are missing from all species in the genome scans
-cat */*/run_n*/missing_busco_list.tsv |sort |uniq -c|awk '$1==8'|wc
-   1197    2416   22831
-
+cat */*Long/run_n*/missing_busco_list.tsv |sort |uniq -c|awk '$1==8'|wc
+    763    1548   14645
 
 #How many are missing from all species in the protein scans
-cat */*/*/run_n*/missing_busco_list.tsv |sort |uniq -c |awk '$1==8'|wc
-    690    1402   13259
+cat */01_protei*/*/run_n*/missing_busco_list.tsv |sort |uniq -c |awk '$1==8'|wc
+   690    1402   13259
+
 
 
 #How many were missing from all protein and all genome scans
-cat */*/run_n*/missing_busco_list.tsv  */*/*/run_n*/missing_busco_list.tsv |sort |uniq -c |less
-cat */*/run_n*/missing_busco_list.tsv  */*/*/run_n*/missing_busco_list.tsv |sort |uniq -c |awk '$1==16'|wc
-    688    1398   13221
+cat */*Long/run_n*/missing_busco_list.tsv  */01_protei/*/run_n*/missing_busco_list.tsv |sort |uniq -c |less
+cat */*Long/run_n*/missing_busco_list.tsv  */01_protei*/*/run_n*/missing_busco_list.tsv |sort |uniq -c |awk '$1==16'|wc
+    666    1354   12808
+
 
 Busco genes missing from Meloidogyne
-cat 0*_Mel*/*/run_n*/missing* 0*_Mel*/01*/*/run_n*/missing* |sort|uniq -c |awk '$1==4' |wc
-    879    1780   16825
+cat 0*_Mel*/*Long/run_n*/missing* 0*_Mel*/01_prote*/*/run_n*/missing* |sort|uniq -c |awk '$1==4' |wc
+    857    1736   16407
+
 
 Busco genes missing from cyst nematodes
-cat 01_*/*/run_n*/missing* 01_*/01*/*/run_n*/missing* 02_*/*/run_n*/missing* 02_*/01*/*/run_n*/missing* 03_*/*/run_n*/missing* 03_*/01*/*/run_n*/missing* 04_*/*/run_n*/missing* 04_*/01*/*/run_n*/missing* 05_*/*/run_n*/missing* 05_*/01*/*/run_n*/missing* 06_*/*/run_n*/missing* 06_*/01*/*/run_n*/missing* |sort|uniq -c |awk '$1=="12"' |wc
-   747    1516   14344
+cat 01_*/*Long/run_n*/missing* 01_*/01*/*/run_n*/missing* 02_*/*Long/run_n*/missing* 02_*/01*/*/run_n*/missing* 03_*/*Long/run_n*/missing* 03_*/01*/*/run_n*/missing* 04_*/*Long/run_n*/missing* 04_*/01*/*/run_n*/missing* 05_*/*Long/run_n*/missing* 05_*/01*/*/run_n*/missing* 06_*/*Long/run_n*/missing* 06_*/01*/*/run_n*/missing* |sort|uniq -c |awk '$1=="12"' |wc
+    724    1470   13912
 
-busco genes missing from globodera
-cat 04_*/*/run_n*/missing* 04_*/01*/*/run_n*/missing* 05_*/*/run_n*/missing* 05_*/01*/*/run_n*/missing* 06_*/*/run_n*/missing* 06_*/01*/*/run_n*/missing* |sort|uniq -c |awk '$1=="6"' |wc
-797
+Busco genes missing from globodera
+cat 04_*/*Long/run_n*/missing* 04_*/01*/*/run_n*/missing* 05_*/*Long/run_n*/missing* 05_*/01*/*/run_n*/missing* 06_*/*Long/run_n*/missing* 06_*/01*/*/run_n*/missing* |sort|uniq -c |awk '$1=="6"' |wc
+    775    1572   14882
+
 
 busco genes missing from all three SCN assemblies
-cat 01_*/*/run_n*/missing* 01_*/01*/*/run_n*/missing* 02_*/*/run_n*/missing* 02_*/01*/*/run_n*/missing* 03_*/*/run_n*/missing* 03_*/01*/*/run_n*/missing* |sort|uniq -c |awk '$1=="6"' |wc
-    824    1670   15802
+cat 01_*/*Long/run_n*/missing* 01_*/01*/*/run_n*/missing* 02_*/*Long/run_n*/missing* 02_*/01*/*/run_n*/missing* 03_*/*Long/run_n*/missing* 03_*/01*/*/run_n*/missing* |sort|uniq -c |awk '$1=="6"' |wc
+    813    1648   15591
+
 ```
 
 
