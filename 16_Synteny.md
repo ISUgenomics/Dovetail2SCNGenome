@@ -107,57 +107,6 @@ less xyz.collinearity |awk 'substr($1,1,3)=="##" && NR>3' |wc
 
 ```
 
-### H. schachtii
-```
-#/work/GIF/remkv6/Baum/04_Dovetail2Restart/31_Synteny/03_H.schachtii
-
-ln -s /work/GIF/remkv6/Baum/12_SchachtiiSynteny/H_sch_gene_calls_v1.aa
-ln -s /work/GIF/remkv6/Baum/12_SchachtiiSynteny/H_sch_gene_calls_v1_CP.gff
-ln -s /work/GIF/remkv6/Baum/12_SchachtiiSynteny/Cam_Hsc_genome1.2.fa
-ln -s ../01_X12/mikado_proteinsFixed.fasta
-ln -s ../01_X12/mikado_proteinsFixed.phr
-ln -s ../01_X12/mikado_proteinsFixed.pin
-ln -s ../01_X12/mikado_proteinsFixed.psq
-ln -s ../01_X12/mikadoMCFormat.gff
-ls
-cp ../01_X12/blastp.sh .
-vi blastp.sh
-
-#filtering the blast
-less Hsch2mikado.blastout |awk '$3>70' >Revised.Hsch2mikado.blastout
-cp Revised.Hsch2mikado.blastout xyz.blast
-
-awk '$3=="transcript" {print $1,$4,$5,$9}' H_sch_gene_calls_v1_CP.gff |sed 's/ID=//g' |sed 's/;/\t/g' |awk '{print "10"$1,$4,$2,$3}' |tr " " "\t" >HschMCFormat.gff
-
-#just to get chromosomes for the control files
-bioawk -c fastx '{print $name,length($seq)}' Cam_Hsc_genome1.2.fa |awk '$2>900000 {print "Hs"$1}' |tr "\n" "," |less
-
-MCScanX xyz
-
-java -classpath /opt/rit/app/mcscanx/20170403/bin/  dot_plotter -g xyz.gff -s xyz.collinearity -c control_file.ctl -o dotplotHsc.png
-
-java -classpath /opt/rit/app/mcscanx/20170403/bin/  bar_plotter -g xyz.gff -s xyz.collinearity -c control_file.ctl -o BarHsc.png
-
-control_file.ctl
-##################################################################
-4000
-4000
-10Scaffold_1,10Scaffold_2,10Scaffold_3,10Scaffold_4,10Scaffold_5,10Scaffold_6,10Scaffold_7,10Scaffold_8,10Scaffold_9
-HsHsc_scaff001,HsHsc_scaff002,HsHsc_scaff003,HsHsc_scaff004,HsHsc_scaff005,HsHsc_scaff006,HsHsc_scaff007,HsHsc_scaff008,HsHsc_scaff009,HsHsc_scaff010,HsHsc_scaff011,HsHsc_scaff012,HsHsc_scaff013,HsHsc_scaff014,HsHsc_scaff015,HsHsc_scaff016,HsHsc_scaff017,HsHsc_scaff018,HsHsc_scaff019,HsHsc_scaff020,HsHsc_scaff021,HsHsc_scaff022,HsHsc_scaff023,HsHsc_scaff024,HsHsc_scaff025,HsHsc_scaff026,HsHsc_scaff027,HsHsc_scaff028,HsHsc_scaff029,HsHsc_scaff030,HsHsc_scaff031,HsHsc_scaff032,HsHsc_scaff033,HsHsc_scaff034,HsHsc_scaff035,HsHsc_scaff036,HsHsc_scaff037,HsHsc_scaff040,HsHsc_scaff041,HsHsc_scaff042,HsHsc_scaff043
-##################################################################
-
-
- java -classpath /opt/rit/app/mcscanx/20170403/bin/  circle_plotter -g xyz.gff -s xyz.collinearity -c Circlecontrol_file.ctl -o CircleHsc.png
-Circlecontrol_file.ctl
-##############################################################
-4000
-10Scaffold_1,10Scaffold_2,10Scaffold_3,10Scaffold_4,10Scaffold_5,10Scaffold_6,10Scaffold_7,10Scaffold_8,10Scaffold_9,HsHsc_scaff001,HsHsc_scaff002,HsHsc_scaff003,HsHsc_scaff004,HsHsc_scaff005,HsHsc_scaff006,HsHsc_scaff007,HsHsc_scaff008,HsHsc_scaff009,HsHsc_scaff010,HsHsc_scaff011,HsHsc_scaff012,HsHsc_scaff013,HsHsc_scaff014,HsHsc_scaff015,HsHsc_scaff016,HsHsc_scaff017,HsHsc_scaff018,HsHsc_scaff019,HsHsc_scaff020,HsHsc_scaff021,HsHsc_scaff022,HsHsc_scaff023,HsHsc_scaff024,HsHsc_scaff025,HsHsc_scaff026,HsHsc_scaff027,HsHsc_scaff028,HsHsc_scaff029,HsHsc_scaff030,HsHsc_scaff031,HsHsc_scaff032,HsHsc_scaff033,HsHsc_scaff034,HsHsc_scaff035,HsHsc_scaff036,HsHsc_scaff037,HsHsc_scaff040,HsHsc_scaff041,HsHsc_scaff042,HsHsc_scaff043,HsHsc_scaff044,HsHsc_scaff046,HsHsc_scaff048,HsHsc_scaff049,HsHsc_scaff050,HsHsc_scaff052,HsHsc_scaff053,HsHsc_scaff055
-##############################################################  
-
-#number of syntenic blocks
-less xyz.collinearity |awk 'substr($1,1,3)=="##" && NR>3' |wc
-    499    3992   41652
-```
 
 ### G. pallida
 ```
