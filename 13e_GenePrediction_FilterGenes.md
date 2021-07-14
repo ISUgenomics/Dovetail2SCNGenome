@@ -1,6 +1,6 @@
 
 ### Investigate genes, How many are clearly transposable elements?
-```
+#/work/gif/remkv6/Baum/04_DovetailSCNGenome/01_mikadoRerurn/05_FinalGenePrediction```
 
 #How many mRNA's in the gene prediction overlap with repetitive elements?
 
@@ -117,7 +117,7 @@ mikado util grep NoRepeatExpressedFinalGeneAndmRNADone.list test.gff FunctionalF
 ```
 
 
-### Merge good alignmetns with cufflinks gffread -M ### testing still 4/14/20
+### Merge good alignmetns with cufflinks gffread -M #
  While this does substantially lower the number of genes that are generated, it does combine genes with mrnas on two strands, which is unlikely.  Having them all displayed as a potential mRNAs may be helpful, but also display lots of spurious transcripts toois also
 ```
 #/work/gif/remkv6/Baum/04_DovetailSCNGenome/01_mikadoRerurn/03_MethionineProteinsOnly

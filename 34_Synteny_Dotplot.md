@@ -42,9 +42,6 @@ minimap2 -x asm5 -t 36 $target $query > ${outname}
 ### Create dotplot
 ```
 git clone https://github.com/tpoorten/dotPlotly.git
-ml R
-
-
 ml miniconda3
 conda create -n dotplotly
 source activate dotplotly
@@ -54,7 +51,7 @@ install.packages(c("optparse", "ggplot2", "plotly")).
 ml gcc/7.3.0-xegsmw4
 git clone https://github.com/tpoorten/dotPlotly.git
 
- ./pafCoordsDotPlotly.R -i ../OnlyPseudoMaskedTN10_MaskedX12_minimap.paf -o SCNgenome_X12Gfuckenome_minimap2.dimbplot -l
+ ./pafCoordsDotPlotly.R -i ../OnlyPseudoMaskedTN10_MaskedX12_minimap.paf -o SCNgenome_X12Genome_minimap2.plot -l
 ```
 
 ## TN10 PSEUDO TO TN10 Draft
@@ -71,5 +68,6 @@ bedtools maskfasta -fi genome738sl.polished.mitofixed.fasta -bed genome738sl.pol
 
 echo "sh runMinimap.sh Masked738.fasta MaskedTN10.fasta" >minimap738.sh
 
+./pafCoordsDotPlotly.R -i ../Masked738_MaskedTN10_minimap2.paf -o PseudoSCNgenome_738Genome_minimap2.plot -l
 
 ```

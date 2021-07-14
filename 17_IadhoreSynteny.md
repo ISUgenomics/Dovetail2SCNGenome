@@ -169,7 +169,8 @@ Median: 74,145
 Min:    2,387
 Max:    1,276,810
 
-
+# percent of tn10 genome
+80,613,520/157,982,452 = 51%
 
 #rename chromosomes to tn10 and x12
 
@@ -280,6 +281,10 @@ Mean:   58,076
 Median: 33,807
 Min:    1,398
 Max:    871,367
+
+% of genome synteny
+65,626,657/157,982,452 = 41.5%
+
 
 ln -s ../../../01_X12/TN10genome.fa
 ln -s ../../genome738sl.polished.mitofixed.fasta
